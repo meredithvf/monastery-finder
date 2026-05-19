@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Monastary Finder app
 
-## Getting Started
+## 1. Discovery Chat
 
-First, run the development server:
+Determines the following about the user and what they want:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Spiritual Orientation
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- contemplative vs devotional
+- mystical vs intellectual
+- structured doctrine vs experiential
+- traditional vs modern
+- ascetic vs balanced
+- ritual-heavy vs meditation-heavy
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Community Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- communal vs private
+- hierarchical vs egalitarian
+- silent vs social
+- long-term residency vs retreat-based
+- lay-friendly vs monastic-oriented
 
-## Learn More
+### Lifestyle
 
-To learn more about Next.js, take a look at the following resources:
+- urban vs rural
+- physically demanding vs accessible
+- digital-friendly vs unplugged
+- strict schedules vs flexible
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Practical Constraints
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- budget
+- visa needs
+- language support
+- dietary restrictions
+- accessibility needs
+- age considerations
+- family friendliness
 
-## Deploy on Vercel
+### Readiness / Seriousness
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+A casual curiosity user should not get the same recommendations as:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- someone seeking ordination
+- burnout recovery
+- long-term residency
+- spiritual crisis
+- deep practice
+
+## Title:
+
+Curious explorer
+Retreat seeker
+Serious practitioner
+Long-term communal living
+Vocational/ordination interest

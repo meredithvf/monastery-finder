@@ -1,0 +1,231 @@
+.discovery {
+  margin-top: 1.15rem;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.discoveryHeader {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.discoveryLabel {
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #4d5b52;
+  font-weight: 700;
+}
+
+.discoveryHint {
+  font-size: 0.9rem;
+  color: #425247;
+  max-width: 52ch;
+}
+
+.chatPanel {
+  background: rgba(253, 251, 247, 0.9);
+  border: 1px solid rgba(205, 215, 205, 0.9);
+  border-radius: 16px;
+  padding: 1rem;
+  backdrop-filter: blur(4px);
+  display: grid;
+  gap: 0.85rem;
+  max-width: 720px;
+}
+
+.messages {
+  display: grid;
+  gap: 0.65rem;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.messageAssistant,
+.messageUser {
+  max-width: 92%;
+  padding: 0.65rem 0.85rem;
+  border-radius: 12px;
+  font-size: 0.94rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+.messageAssistant {
+  background: #fffefc;
+  border: 1px solid #d5dfd4;
+  color: #2f3d34;
+  justify-self: start;
+}
+
+.messageUser {
+  background: #7b8f82;
+  color: #f9fcf9;
+  justify-self: end;
+}
+
+.typing {
+  color: #657268;
+  font-style: italic;
+}
+
+.composer {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.65rem;
+  align-items: end;
+}
+
+.composer textarea {
+  resize: vertical;
+  min-height: 44px;
+  max-height: 120px;
+  background: #fffefc;
+  border: 1px solid #c9d5c8;
+  border-radius: 10px;
+  padding: 0.65rem 0.75rem;
+  font-size: 0.95rem;
+  color: #243228;
+  font-family: inherit;
+  line-height: 1.45;
+}
+
+.composer textarea:disabled {
+  opacity: 0.7;
+}
+
+.composer button {
+  border: 0;
+  border-radius: 10px;
+  background: #7b8f82;
+  color: #f9fcf9;
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.75rem 1rem;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.composer button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.secondaryButton {
+  border: 1px solid #c9d5c8;
+  border-radius: 10px;
+  background: #fffefc;
+  color: #4d5b52;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 0.6rem 0.9rem;
+  cursor: pointer;
+  justify-self: start;
+}
+
+.error {
+  color: #8b3a3a;
+  font-size: 0.88rem;
+  margin: 0;
+}
+
+.profile {
+  border-top: 1px solid #d5dfd4;
+  padding-top: 0.85rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.profileLabel {
+  font-size: 0.74rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #6a7d70;
+  font-weight: 700;
+  margin: 0;
+}
+
+.profileTitle {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.profileSummary {
+  color: #425247;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.profileSection {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.profileSection h4 {
+  font-size: 0.82rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6a7d70;
+  margin: 0;
+  font-weight: 700;
+}
+
+.profileSection p {
+  margin: 0;
+  color: #425247;
+  font-size: 0.92rem;
+}
+
+.spectrumRow {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.spectrumLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: #657268;
+}
+
+.spectrumTrack {
+  position: relative;
+  height: 6px;
+  border-radius: 999px;
+  background: #e3ebe3;
+}
+
+.spectrumThumb {
+  position: absolute;
+  top: -3px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #7b8f82;
+  border: 2px solid #fffefc;
+  box-shadow: 0 1px 4px rgba(74, 97, 83, 0.25);
+}
+
+.practicalList {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: #425247;
+  font-size: 0.92rem;
+  display: grid;
+  gap: 0.25rem;
+}
+
+@media (max-width: 680px) {
+  .composer {
+    grid-template-columns: 1fr;
+  }
+
+  .messages {
+    max-height: 220px;
+  }
+}

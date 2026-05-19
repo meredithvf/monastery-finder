@@ -1,3 +1,4 @@
+import DiscoveryChat from "@/components/DiscoveryChat";
 import styles from "./page.module.css";
 
 const featuredMonasteries = [
@@ -40,31 +41,10 @@ export default function Home() {
           <h1>Monasteries. Convents. Temples.</h1>
           <p className={styles.subtitle}>
             Take a weekend christian retreat, or live a year at a buddhist
-            monastery. Find the place where your sould needs to go.
+            monastery. Find the place where your soul needs to be.
           </p>
 
-          <form className={styles.searchPanel}>
-            <label className={styles.field}>
-              Retreat focus
-              <input
-                type="text"
-                placeholder="Silence, liturgy, study, hiking..."
-              />
-            </label>
-            <label className={styles.field}>
-              Region
-              <select defaultValue="">
-                <option value="" disabled>
-                  Choose a region
-                </option>
-                <option>Europe</option>
-                <option>North America</option>
-                <option>South America</option>
-                <option>Asia</option>
-              </select>
-            </label>
-            <button type="button">Start Exploring</button>
-          </form>
+          <DiscoveryChat />
         </div>
       </header>
 
