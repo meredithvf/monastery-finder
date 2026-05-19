@@ -1,65 +1,112 @@
-import Image from "next/image";
 import styles from "./page.module.css";
+
+const featuredMonasteries = [
+  {
+    name: "Abbey of Sainte-Marie",
+    location: "Provence, France",
+    tradition: "Benedictine",
+    environment: "Lavender fields, stone cloisters, and morning liturgy.",
+  },
+  {
+    name: "Monasterio de San Salvador",
+    location: "Galicia, Spain",
+    tradition: "Cistercian",
+    environment: "Forest hills, pilgrimage trails, and simple guest rooms.",
+  },
+  {
+    name: "St. Theophan Monastery",
+    location: "Meteora, Greece",
+    tradition: "Orthodox",
+    environment: "Mountain overlooks, candlelit chapel, and guided silence.",
+  },
+];
 
 export default function Home() {
   return (
     <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
+      <header className={styles.hero}>
+        <div className={styles.heroMedia} />
+        <div className={styles.overlay} />
+        <nav className={styles.nav}>
+          <p className={styles.brand}>Monastery Finder</p>
+          <div className={styles.navLinks}>
+            <a href="#">Discover</a>
+            <a href="#">Retreat Types</a>
+            <a href="#">Resources</a>
+          </div>
+        </nav>
+
+        <div className={styles.heroContent}>
+          <h1>Monasteries. Convents. Temples.</h1>
+          <p className={styles.subtitle}>
+            Take a weekend christian retreat, or live a year at a buddhist
+            monastery. Find the place where your sould needs to go.
           </p>
+
+          <form className={styles.searchPanel}>
+            <label className={styles.field}>
+              Retreat focus
+              <input
+                type="text"
+                placeholder="Silence, liturgy, study, hiking..."
+              />
+            </label>
+            <label className={styles.field}>
+              Region
+              <select defaultValue="">
+                <option value="" disabled>
+                  Choose a region
+                </option>
+                <option>Europe</option>
+                <option>North America</option>
+                <option>South America</option>
+                <option>Asia</option>
+              </select>
+            </label>
+            <button type="button">Start Exploring</button>
+          </form>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+      </header>
+
+      <main className={styles.main}>
+        <section className={styles.section}>
+          <div className={styles.sectionHeading}>
+            <p className={styles.sectionLabel}>Featured stays</p>
+            <h2>
+              Monasteries selected for peaceful settings and welcoming hosts.
+            </h2>
+            <p>
+              A curated shortlist inspired by seasonal weather, accessibility,
+              and contemplative rhythm.
+            </p>
+          </div>
+          <div className={styles.cardGrid}>
+            {featuredMonasteries.map((monastery) => (
+              <article key={monastery.name} className={styles.card}>
+                <p className={styles.cardTradition}>{monastery.tradition}</p>
+                <h3>{monastery.name}</h3>
+                <p className={styles.cardLocation}>{monastery.location}</p>
+                <p>{monastery.environment}</p>
+                <button type="button">View retreat</button>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className={`${styles.section} ${styles.secondarySection}`}>
+          <div className={styles.sectionHeading}>
+            <p className={styles.sectionLabel}>Browse by atmosphere</p>
+            <h2>Choose the feeling you want to travel into.</h2>
+          </div>
+          <div className={styles.chips}>
+            <span>Mountain quiet</span>
+            <span>Coastal breeze</span>
+            <span>Forest solitude</span>
+            <span>Ancient architecture</span>
+            <span>Liturgical music</span>
+            <span>Pilgrimage routes</span>
+          </div>
+        </section>
       </main>
     </div>
   );
