@@ -12,28 +12,39 @@
 }
 
 .hero {
+  --fold: 100vh;
+  --fold: 100dvh;
   position: relative;
-  min-height: 84vh;
+  min-height: var(--fold);
   padding: 2rem clamp(1.1rem, 4vw, 3.2rem) 4.2rem;
   color: #213026;
   display: grid;
   align-content: space-between;
+  background: var(--paper);
   overflow: hidden;
 }
 
 .heroMedia {
   position: absolute;
-  inset: 0;
+  inset: 0 0 auto 0;
+  height: var(--fold);
   background-image: url("/bodhi_meditation_hall.jpeg");
   background-size: cover;
   background-position: center center;
+  background-repeat: no-repeat;
   transform: scale(1.02);
+  transform-origin: center center;
   filter: saturate(0.72) brightness(1.12) contrast(0.84);
+  pointer-events: none;
 }
 
 .overlay {
   position: absolute;
-  inset: 0;
+  inset: 0 0 auto 0;
+  height: var(--fold);
+  transform: scale(1.02);
+  transform-origin: center center;
+  pointer-events: none;
   background:
     linear-gradient(
       180deg,
@@ -89,9 +100,18 @@
 }
 
 .heroContent {
-  max-width: 860px;
+  width: 100%;
   display: grid;
   gap: 1rem;
+  justify-items: start;
+}
+
+.discoveryBelowFold {
+  width: min(720px, 92vw);
+  margin: 0 auto;
+  padding: 2.5rem clamp(1.1rem, 4vw, 3.2rem) 2rem;
+  display: grid;
+  gap: 1.5rem;
 }
 
 .heroContent h1 {
@@ -270,10 +290,6 @@
 }
 
 @media (max-width: 680px) {
-  .hero {
-    min-height: 90vh;
-  }
-
   .nav {
     flex-direction: column;
     align-items: flex-start;

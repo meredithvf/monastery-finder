@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import styles from "./DiscoveryChat.module.css";
 import {
   SPECTRUM_LABELS,
@@ -14,14 +21,40 @@ const INITIAL_MESSAGE: ChatMessage = {
     "Welcome. I will ask a few questions about your spiritual interests, the kind of community you imagine, practical needs, and how seriously you are exploring — then I will shape a profile to guide your search. \n\n What draws you to monasteries or retreats right now?",
 };
 
-function SpectrumBar({
+type SpectrumGroup = keyof typeof SPECTRUM_LABELS;
+
+type DiscoveryContextValue = {
+  messages: ChatMessage[];
+  input: string;
+  setInput: (value: string) => void;
+  loading: boolean;
+  error: string | null;
+  profile: UserDiscoveryProfile | null;
+  setProfile: (profile: UserDiscoveryProfile | null) => void;
+  sendMessage: () => Promise<void>;
+  startOver: () => void;
+};
+
+const DiscoveryContext = createContext<DiscoveryContextValue | null>(null);
+
+function useDiscovery() {
+  const value = useContext(DiscoveryContext);
+  if (!value) {
+    throw new Error("Discovery components must be used within DiscoveryProvider");
+  }
+  return value;
+}
+
+function SpectrumSlider({
   left,
   right,
   value,
+  onChange,
 }: {
   left: string;
   right: string;
   value: number;
+  onChange: (value: number) => void;
 }) {
   return (
     <div className={styles.spectrumRow}>
@@ -29,20 +62,44 @@ function SpectrumBar({
         <span>{left}</span>
         <span>{right}</span>
       </div>
-      <div className={styles.spectrumTrack}>
-        <div
-          className={styles.spectrumThumb}
-          style={{ left: `calc(${value}% - 6px)` }}
-        />
-      </div>
+      <input
+        type="range"
+        min={0}
+        max={100}
+        step={1}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className={styles.spectrumSlider}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={value}
+        aria-valuetext={`${value}% toward ${right}`}
+        aria-label={`${left} to ${right}`}
+      />
     </div>
   );
 }
 
-function ProfileView({ profile }: { profile: UserDiscoveryProfile }) {
+function ProfileView({
+  profile,
+  onChange,
+}: {
+  profile: UserDiscoveryProfile;
+  onChange: (profile: UserDiscoveryProfile) => void;
+}) {
+  function updateSpectrum(group: SpectrumGroup, key: string, value: number) {
+    onChange({
+      ...profile,
+      [group]: {
+        ...profile[group],
+        [key]: value,
+      },
+    });
+  }
+
   const renderSpectrums = (
     scores: Record<string, number>,
-    group: keyof typeof SPECTRUM_LABELS,
+    group: SpectrumGroup,
   ) =>
     (
       Object.keys(SPECTRUM_LABELS[group]) as Array<
@@ -53,11 +110,12 @@ function ProfileView({ profile }: { profile: UserDiscoveryProfile }) {
       const value = scores[key as string];
       if (value === undefined) return null;
       return (
-        <SpectrumBar
+        <SpectrumSlider
           key={String(key)}
           left={labels[0]}
           right={labels[1]}
           value={value}
+          onChange={(next) => updateSpectrum(group, key as string, next)}
         />
       );
     });
@@ -130,20 +188,12 @@ function ProfileView({ profile }: { profile: UserDiscoveryProfile }) {
   );
 }
 
-export default function DiscoveryChat() {
+export function DiscoveryProvider({ children }: { children: ReactNode }) {
   const [messages, setMessages] = useState<ChatMessage[]>([INITIAL_MESSAGE]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [profile, setProfile] = useState<UserDiscoveryProfile | null>(null);
-  const messagesRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    const container = messagesRef.current;
-    if (!container) return;
-    container.scrollTop = container.scrollHeight;
-  }, [messages, loading, profile]);
 
   async function sendMessage() {
     const text = input.trim();
@@ -179,14 +229,6 @@ export default function DiscoveryChat() {
       setError(err instanceof Error ? err.message : "Failed to send message.");
     } finally {
       setLoading(false);
-      inputRef.current?.focus({ preventScroll: true });
-    }
-  }
-
-  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      void sendMessage();
     }
   }
 
@@ -195,6 +237,50 @@ export default function DiscoveryChat() {
     setProfile(null);
     setError(null);
     setInput("");
+  }
+
+  return (
+    <DiscoveryContext.Provider
+      value={{
+        messages,
+        input,
+        setInput,
+        loading,
+        error,
+        profile,
+        setProfile,
+        sendMessage,
+        startOver,
+      }}
+    >
+      {children}
+    </DiscoveryContext.Provider>
+  );
+}
+
+export function DiscoveryChatSection() {
+  const { messages, input, setInput, loading, error, profile, sendMessage } =
+    useDiscovery();
+  const messagesRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    const container = messagesRef.current;
+    if (!container) return;
+    container.scrollTop = container.scrollHeight;
+  }, [messages, loading]);
+
+  useEffect(() => {
+    if (!loading && !profile) {
+      inputRef.current?.focus({ preventScroll: true });
+    }
+  }, [loading, profile]);
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      void sendMessage();
+    }
   }
 
   return (
@@ -234,18 +320,7 @@ export default function DiscoveryChat() {
 
         {error && <p className={styles.error}>{error}</p>}
 
-        {profile ? (
-          <>
-            <ProfileView profile={profile} />
-            <button
-              type="button"
-              className={styles.secondaryButton}
-              onClick={startOver}
-            >
-              Start over
-            </button>
-          </>
-        ) : (
+        {!profile && (
           <div className={styles.composer}>
             <textarea
               ref={inputRef}
@@ -268,5 +343,46 @@ export default function DiscoveryChat() {
         )}
       </div>
     </section>
+  );
+}
+
+export function DiscoveryProfileSection() {
+  const { profile, setProfile, startOver } = useDiscovery();
+  const profileRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!profile) return;
+    profileRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [profile]);
+
+  if (!profile) return null;
+
+  return (
+    <section
+      ref={profileRef}
+      className={styles.profileBelowFold}
+      aria-label="Your discovery profile"
+    >
+      <div className={styles.profilePanel}>
+        <ProfileView profile={profile} onChange={setProfile} />
+        <button
+          type="button"
+          className={styles.secondaryButton}
+          onClick={startOver}
+        >
+          Start over
+        </button>
+      </div>
+    </section>
+  );
+}
+
+/** @deprecated Use DiscoveryProvider with DiscoveryChatSection and DiscoveryProfileSection */
+export default function DiscoveryChat() {
+  return (
+    <>
+      <DiscoveryChatSection />
+      <DiscoveryProfileSection />
+    </>
   );
 }
