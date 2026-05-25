@@ -2,6 +2,7 @@
 
 import type { CommunitySort } from "@/lib/types/community";
 import styles from "./communities.module.css";
+import btnStyles from "@/styles/buttons.module.css";
 
 type Props = {
   search: string;
@@ -34,7 +35,7 @@ export function SearchAndSort({
           aria-label="Search communities"
         />
         {showDistanceSort && onRequestLocation && !locationEnabled && (
-          <button type="button" className={styles.btnGhost} onClick={onRequestLocation}>
+          <button type="button" className={btnStyles.btnGhost} onClick={onRequestLocation}>
             Use location
           </button>
         )}

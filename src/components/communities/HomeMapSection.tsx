@@ -4,12 +4,13 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useCommunities } from "@/hooks/useCommunities";
+import { isUSCommunity } from "@/lib/usMap";
 import styles from "./communities.module.css";
 import pageStyles from "@/app/page.module.css";
+import btnStyles from "@/styles/buttons.module.css";
 
 const CommunityMap = dynamic(
-  () =>
-    import("./CommunityMap").then((m) => ({ default: m.CommunityMap })),
+  () => import("./CommunityMap").then((m) => ({ default: m.CommunityMap })),
   {
     ssr: false,
     loading: () => <p className={styles.status}>Loading map…</p>,
@@ -18,21 +19,18 @@ const CommunityMap = dynamic(
 
 export function HomeMapSection() {
   const { mappable, loading, error } = useCommunities();
+  const usMappable = useMemo(() => mappable.filter(isUSCommunity), [mappable]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const preview = useMemo(
-    () => mappable.find((c) => c.id === selectedId) ?? null,
-    [mappable, selectedId],
+    () => usMappable.find((c) => c.id === selectedId) ?? null,
+    [usMappable, selectedId],
   );
 
   return (
     <section className={styles.homeMapSection} aria-label="Explore on map">
       <div className={pageStyles.sectionHeading}>
         <p className={pageStyles.sectionLabel}>Explore communities</p>
-        <h2>See contemplative places across the map.</h2>
-        <p>
-          Browse enriched monastery and retreat profiles from our research
-          pipeline — filter by tradition, setting, and practical fit.
-        </p>
+        <h2>Explore Communities</h2>
       </div>
 
       <div className={styles.homeMapFrame}>
@@ -40,11 +38,12 @@ export function HomeMapSection() {
         {error && <p className={styles.error}>{error}</p>}
         {!loading && !error && (
           <CommunityMap
-            communities={mappable}
+            communities={usMappable}
             selectedId={selectedId}
             onSelect={setSelectedId}
             height={360}
             initialZoom={3.2}
+            restrictToUS
           />
         )}
       </div>
@@ -59,10 +58,10 @@ export function HomeMapSection() {
       )}
 
       <div className={styles.homeMapActions}>
-        <Link href="/map" className={styles.btn}>
+        <Link href="/map" className={btnStyles.btn}>
           Open full map
         </Link>
-        <Link href="/list" className={styles.btnGhost}>
+        <Link href="/list" className={btnStyles.btnGhost}>
           Browse list
         </Link>
       </div>

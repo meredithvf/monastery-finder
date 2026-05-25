@@ -5,6 +5,7 @@ import { formatLocation } from "@/lib/communities";
 import type { CommunityListItem } from "@/lib/types/community";
 import { ScoreSummary } from "./ScoreSummary";
 import styles from "./communities.module.css";
+import btnStyles from "@/styles/buttons.module.css";
 
 type Props = {
   item: CommunityListItem;
@@ -30,7 +31,7 @@ export function CommunityPreviewCard({ item, onClose, compact }: Props) {
         {onClose && (
           <button
             type="button"
-            className={styles.btnGhost}
+            className={btnStyles.btnGhost}
             onClick={onClose}
             aria-label="Close preview"
           >
@@ -42,7 +43,7 @@ export function CommunityPreviewCard({ item, onClose, compact }: Props) {
         <p>{item.shortDescription.slice(0, compact ? 120 : 200)}</p>
       )}
       <ScoreSummary item={item} />
-      <Link href={`/community/${item.id}`} className={styles.btn}>
+      <Link href={`/community/${item.id}`} className={btnStyles.btn}>
         View full profile
       </Link>
     </div>

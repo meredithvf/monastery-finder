@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import styles from "./DiscoveryChat.module.css";
+import btnStyles from "@/styles/buttons.module.css";
 import {
   SPECTRUM_LABELS,
   type ChatMessage,
@@ -334,6 +335,7 @@ export function DiscoveryChatSection() {
             />
             <button
               type="button"
+              className={btnStyles.btn}
               onClick={() => void sendMessage()}
               disabled={loading || !input.trim()}
             >
@@ -367,7 +369,7 @@ export function DiscoveryProfileSection() {
         <ProfileView profile={profile} onChange={setProfile} />
         <button
           type="button"
-          className={styles.secondaryButton}
+          className={btnStyles.btnGhost}
           onClick={startOver}
         >
           Start over

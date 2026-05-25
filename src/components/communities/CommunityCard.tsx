@@ -3,6 +3,7 @@ import { formatLocation } from "@/lib/communities";
 import type { CommunityListItem } from "@/lib/types/community";
 import { ScoreSummary } from "./ScoreSummary";
 import styles from "./communities.module.css";
+import btnStyles from "@/styles/buttons.module.css";
 
 export function CommunityCard({ item }: { item: CommunityListItem }) {
   return (
@@ -27,7 +28,7 @@ export function CommunityCard({ item }: { item: CommunityListItem }) {
           ))}
         </div>
       )}
-      <Link href={`/community/${item.id}`} className={styles.btn}>
+      <Link href={`/community/${item.id}`} className={btnStyles.btn}>
         View profile
       </Link>
     </article>

@@ -2,6 +2,7 @@
 
 import type { CommunityFilters as Filters } from "@/lib/types/community";
 import styles from "./communities.module.css";
+import btnStyles from "@/styles/buttons.module.css";
 
 type Props = {
   filters: Filters;
@@ -85,7 +86,7 @@ export function CommunityFiltersBar({
       </label>
 
       {onReset && (
-        <button type="button" className={styles.btnGhost} onClick={onReset}>
+        <button type="button" className={btnStyles.btnGhost} onClick={onReset}>
           Reset
         </button>
       )}

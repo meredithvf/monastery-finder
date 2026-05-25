@@ -5,11 +5,11 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Map, { Marker, NavigationControl } from "react-map-gl/mapbox";
 import Supercluster from "supercluster";
 import type { CommunityListItem } from "@/lib/types/community";
+import { US_MAP_CENTER, US_MAX_BOUNDS } from "@/lib/usMap";
 import { CommunityPreviewCard } from "./CommunityPreviewCard";
 import styles from "./communities.module.css";
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN ?? "";
-const US_CENTER = { longitude: -98.5, latitude: 39.5, zoom: 3.5 };
 
 type Props = {
   communities: CommunityListItem[];
@@ -18,6 +18,7 @@ type Props = {
   height?: string | number;
   showPreview?: boolean;
   initialZoom?: number;
+  restrictToUS?: boolean;
 };
 
 type ClusterFeature = Supercluster.PointFeature<{
@@ -33,16 +34,17 @@ export function CommunityMap({
   height = "100%",
   showPreview = true,
   initialZoom,
+  restrictToUS = false,
 }: Props) {
   const [viewState, setViewState] = useState({
-    longitude: US_CENTER.longitude,
-    latitude: US_CENTER.latitude,
-    zoom: initialZoom ?? US_CENTER.zoom,
+    longitude: US_MAP_CENTER.longitude,
+    latitude: US_MAP_CENTER.latitude,
+    zoom: initialZoom ?? US_MAP_CENTER.zoom,
   });
   const [bounds, setBounds] = useState<[number, number, number, number] | null>(
     null,
   );
-  const [zoom, setZoom] = useState(US_CENTER.zoom);
+  const [zoom, setZoom] = useState(US_MAP_CENTER.zoom);
 
   const points = useMemo<ClusterFeature[]>(() => {
     return communities
@@ -95,6 +97,7 @@ export function CommunityMap({
   );
 
   useEffect(() => {
+    if (restrictToUS) return;
     if (communities.length === 0) return;
     const lats = communities.map((c) => c.latitude!).filter(Boolean);
     const lngs = communities.map((c) => c.longitude!).filter(Boolean);
@@ -109,7 +112,7 @@ export function CommunityMap({
       latitude: (minLat + maxLat) / 2,
       zoom: initialZoom ?? (lats.length === 1 ? 8 : 4),
     }));
-  }, [communities, initialZoom]);
+  }, [communities, initialZoom, restrictToUS]);
 
   if (!MAPBOX_TOKEN) {
     return (
@@ -139,6 +142,9 @@ export function CommunityMap({
         style={{ width: "100%", height: "100%" }}
         attributionControl={false}
         reuseMaps
+        {...(restrictToUS
+          ? { maxBounds: US_MAX_BOUNDS, minZoom: 2.5 }
+          : {})}
       >
         <NavigationControl position="top-right" showCompass={false} />
 

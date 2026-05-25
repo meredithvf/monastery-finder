@@ -5,6 +5,7 @@ import {
 } from "@/components/DiscoveryChat";
 import { HomeMapSection } from "@/components/communities/HomeMapSection";
 import styles from "./page.module.css";
+import btnStyles from "@/styles/buttons.module.css";
 
 const featuredMonasteries = [
   {
@@ -78,7 +79,9 @@ export default function Home() {
                   <h3>{monastery.name}</h3>
                   <p className={styles.cardLocation}>{monastery.location}</p>
                   <p>{monastery.environment}</p>
-                  <button type="button">View retreat</button>
+                  <button type="button" className={`${btnStyles.btn} ${styles.cardAction}`}>
+                    View retreat
+                  </button>
                 </article>
               ))}
             </div>

@@ -1,13 +1,15 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { CommunityFiltersBar } from "@/components/communities/CommunityFilters";
 import { CommunityPreviewCard } from "@/components/communities/CommunityPreviewCard";
 import { SiteNav } from "@/components/communities/SiteNav";
 import styles from "@/components/communities/communities.module.css";
+import btnStyles from "@/styles/buttons.module.css";
 import { useCommunities } from "@/hooks/useCommunities";
 import { useCommunityFilters } from "@/hooks/useCommunityFilters";
+import { isUSCommunity } from "@/lib/usMap";
 
 const CommunityMap = dynamic(
   () =>
@@ -22,8 +24,16 @@ export default function MapPageClient() {
   const { filtered, mappable, traditions, loading, error } = useCommunities({
     filters,
   });
+  const usFiltered = useMemo(
+    () => filtered.filter(isUSCommunity),
+    [filtered],
+  );
+  const usMappable = useMemo(
+    () => mappable.filter(isUSCommunity),
+    [mappable],
+  );
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const selected = filtered.find((c) => c.id === selectedId) ?? null;
+  const selected = usFiltered.find((c) => c.id === selectedId) ?? null;
 
   return (
     <div className={styles.shell}>
@@ -46,7 +56,7 @@ export default function MapPageClient() {
         {error && <p className={styles.error}>{error}</p>}
         {!loading && (
           <p className={styles.cardMeta}>
-            {filtered.length} communit{filtered.length === 1 ? "y" : "ies"}
+            {usFiltered.length} communit{usFiltered.length === 1 ? "y" : "ies"}
           </p>
         )}
       </div>
@@ -57,11 +67,12 @@ export default function MapPageClient() {
             <p className={styles.status}>Loading communities…</p>
           ) : (
             <CommunityMap
-              communities={mappable}
+              communities={usMappable}
               selectedId={selectedId}
               onSelect={setSelectedId}
               height="calc(100vh - 220px)"
               showPreview={false}
+              restrictToUS
             />
           )}
         </div>
@@ -78,11 +89,11 @@ export default function MapPageClient() {
             </p>
           )}
           <div style={{ marginTop: "1rem", display: "grid", gap: "0.5rem" }}>
-            {filtered.slice(0, 12).map((item) => (
+            {usFiltered.slice(0, 12).map((item) => (
               <button
                 key={item.id}
                 type="button"
-                className={styles.btnGhost}
+                className={btnStyles.btnGhost}
                 style={{ textAlign: "left" }}
                 onClick={() => setSelectedId(item.id)}
               >

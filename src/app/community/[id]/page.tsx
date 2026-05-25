@@ -2,8 +2,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CommunityDetailMap } from "./CommunityDetailMap";
 import { SiteNav } from "@/components/communities/SiteNav";
+import { ScoreBar } from "@/components/communities/ScoreBar";
 import { WebsiteContentSections } from "@/components/communities/WebsiteContentSections";
 import styles from "@/components/communities/communities.module.css";
+import btnStyles from "@/styles/buttons.module.css";
 import {
   fetchCommunityById,
   formatLocation,
@@ -13,7 +15,6 @@ import {
   FEATURE_FIELD_LABELS,
   FEATURE_GROUP_LABELS,
   formatBinaryFeature,
-  formatScorePct,
   parseFeatureScores,
 } from "@/lib/feature-scores";
 import { hasWebsiteContent } from "@/lib/website-content";
@@ -44,19 +45,8 @@ const STAY_OPTION_LABELS: Record<StayOption, string> = {
   volunteer: "Volunteer",
 };
 
-function pct(n: number | null | undefined): string {
-  return formatScorePct(n ?? null);
-}
-
 function isUnknown(value: string | null | undefined): boolean {
   return !value || value.toLowerCase() === "unknown";
-}
-
-function renderFeatureValue(key: string, value: ScoreUnit | 0 | 1): string {
-  if (BINARY_FIELDS.has(key)) {
-    return formatBinaryFeature(value as 0 | 1);
-  }
-  return pct(value as ScoreUnit);
 }
 
 function formatTriState(value: TriState | undefined): string {
@@ -112,12 +102,20 @@ function FeatureGroupSection({
         {title}
       </h3>
       <div className={styles.scoreGrid}>
-        {Object.entries(features).map(([key, value]) => (
-          <div key={key} className={styles.scoreItem}>
-            <span>{FEATURE_FIELD_LABELS[key] ?? key}</span>
-            <strong>{renderFeatureValue(key, value)}</strong>
-          </div>
-        ))}
+        {Object.entries(features).map(([key, value]) =>
+          BINARY_FIELDS.has(key) ? (
+            <div key={key} className={styles.scoreItem}>
+              <span>{FEATURE_FIELD_LABELS[key] ?? key}</span>
+              <strong>{formatBinaryFeature(value as 0 | 1)}</strong>
+            </div>
+          ) : (
+            <ScoreBar
+              key={key}
+              label={FEATURE_FIELD_LABELS[key] ?? key}
+              value={value as ScoreUnit}
+            />
+          ),
+        )}
       </div>
     </div>
   );
@@ -343,18 +341,18 @@ export default async function CommunityDetailPage({ params }: Props) {
             <h2>Scores</h2>
             {scores && (
               <div className={styles.scoreGrid}>
-                <div className={styles.scoreItem}>
-                  <span>Overall match</span>
-                  <strong>{pct(scores.adjusted_overall)}</strong>
-                </div>
-                <div className={styles.scoreItem}>
-                  <span>Data completeness</span>
-                  <strong>{pct(scores.adjusted_data_completeness)}</strong>
-                </div>
-                <div className={styles.scoreItem}>
-                  <span>Source quality</span>
-                  <strong>{pct(scores.adjusted_source_quality)}</strong>
-                </div>
+                <ScoreBar
+                  label="Overall match"
+                  value={scores.adjusted_overall}
+                />
+                <ScoreBar
+                  label="Data completeness"
+                  value={scores.adjusted_data_completeness}
+                />
+                <ScoreBar
+                  label="Source quality"
+                  value={scores.adjusted_source_quality}
+                />
               </div>
             )}
             {groups &&
@@ -378,12 +376,10 @@ export default async function CommunityDetailPage({ params }: Props) {
                   Extraction signals
                 </h3>
                 <div className={styles.scoreGrid}>
-                  <div className={styles.scoreItem}>
-                    <span>{FEATURE_FIELD_LABELS.extraction_confidence}</span>
-                    <strong>
-                      {pct(featureScores.signals.extraction_confidence)}
-                    </strong>
-                  </div>
+                  <ScoreBar
+                    label={FEATURE_FIELD_LABELS.extraction_confidence}
+                    value={featureScores.signals.extraction_confidence}
+                  />
                 </div>
                 {featureScores.signals.missing_data_fields.length > 0 && (
                   <p
@@ -490,7 +486,7 @@ export default async function CommunityDetailPage({ params }: Props) {
           </section>
         )}
 
-        <Link href="/list" className={styles.btnGhost}>
+        <Link href="/list" className={btnStyles.btnGhost}>
           ← Back to list
         </Link>
       </article>
