@@ -6,6 +6,7 @@ import {
   getUrbanVsRuralScore,
   parseFeatureScores,
 } from "@/lib/feature-scores";
+import { resolveWebsiteContent } from "@/lib/website-content";
 import type {
   CommunityFilters,
   CommunityListItem,
@@ -14,6 +15,7 @@ import type {
   CommunityRow,
   CommunityScoresRow,
   CommunitySort,
+  CommunityWebsiteContent,
   CommunityWithRelations,
   RuralUrban,
   TriState,
@@ -253,6 +255,7 @@ export async function fetchCommunityById(
   profile: CommunityProfileJson | null;
   scores: CommunityScoresRow | null;
   profileMeta: CommunityProfileRow | null;
+  websiteContent: CommunityWebsiteContent | null;
 } | null> {
   const { data, error } = await supabase
     .from("communities")
@@ -265,11 +268,13 @@ export async function fetchCommunityById(
 
   const row = data as CommunityWithRelations;
   const profileRel = firstRelation(row.community_profiles);
+  const profile = profileRel?.profile ?? null;
   return {
     community: row,
-    profile: profileRel?.profile ?? null,
+    profile,
     scores: parseScores(row),
     profileMeta: profileRel,
+    websiteContent: resolveWebsiteContent(profile),
   };
 }
 

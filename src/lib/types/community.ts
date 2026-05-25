@@ -87,6 +87,65 @@ export type CommunityType =
 
 export type RuralUrban = "rural" | "urban" | "suburban" | "unknown";
 export type TriState = "yes" | "no" | "mixed" | "unknown";
+export type Level = "low" | "medium" | "high" | "unknown";
+export type StudyVsPractice =
+  | "study"
+  | "balanced"
+  | "practice-heavy"
+  | "unknown";
+export type CommunityTone =
+  | "strict"
+  | "warm"
+  | "mixed"
+  | "academic"
+  | "mystical"
+  | "unknown";
+export type HousingAvailability = "yes" | "no" | "limited" | "unknown";
+export type StayOption =
+  | "retreat"
+  | "short_term"
+  | "long_term"
+  | "resident"
+  | "volunteer";
+
+/** Hero image from `display.imageUrl`. */
+export type WebsitePrimaryImage = {
+  url: string;
+  alt?: string;
+};
+
+/** One website summary section assembled from profile fields. */
+export type WebsiteContentSection = {
+  content: string;
+};
+
+/** Website summaries extracted from unified `community_profiles.profile` jsonb. */
+export type CommunityWebsiteContent = {
+  primaryImage?: WebsitePrimaryImage;
+  homepage: WebsiteContentSection | null;
+  about: WebsiteContentSection | null;
+  retreats: WebsiteContentSection | null;
+  programs: WebsiteContentSection | null;
+  guidelines: WebsiteContentSection | null;
+  pricing: WebsiteContentSection | null;
+  schedule: WebsiteContentSection | null;
+  residency: WebsiteContentSection | null;
+  visitorInfo: WebsiteContentSection | null;
+};
+
+export const WEBSITE_CONTENT_FIELDS = [
+  "homepage",
+  "about",
+  "retreats",
+  "programs",
+  "guidelines",
+  "pricing",
+  "schedule",
+  "residency",
+  "visitorInfo",
+] as const;
+
+export type WebsiteContentField = (typeof WEBSITE_CONTENT_FIELDS)[number];
 
 export type CommunityProfileJson = {
   coreIdentity: {
@@ -110,41 +169,52 @@ export type CommunityProfileJson = {
     tags: string[];
     imageUrl?: string;
     summaryTagline?: string;
+    homepage?: string | null;
+    about?: string | null;
     etiquette?: {
       dressCode?: string;
       communicationStyle?: string;
       behaviorNotes?: string;
+      guidelines?: string | null;
     };
     lastEnrichedAt?: string;
   };
   practice: {
     dailyLife: {
       scheduleSummary: string;
-      silenceLevel: string;
+      silenceLevel: Level;
       workPractice?: string;
       typicalDay?: string;
     };
     practiceStyle: {
-      meditationIntensity: string;
-      ritualLevel: string;
-      studyVsPractice: string;
+      meditationIntensity: Level;
+      ritualLevel: Level;
+      studyVsPractice: StudyVsPractice;
     };
     communityAtmosphere: {
-      tone: string;
-      communalityLevel: string;
+      tone: CommunityTone;
+      communalityLevel: Level;
     };
   };
   accessibility: {
     beginnerFriendly: TriState;
     englishSupport?: TriState;
+    culturalBarrier?: Level;
+    applicationDifficulty?: Level;
+    stayFlexibility?: Level;
+    retreats?: string | null;
+    programs?: string | null;
+    pricing?: string | null;
+    residency?: string | null;
+    visitorInfo?: string | null;
     logistics: {
       cost: {
         min: number | null;
         max: number | null;
         currency: string;
       };
-      stayOptions: string[];
-      housingAvailable: string;
+      stayOptions: StayOption[];
+      housingAvailable: HousingAvailability;
     };
   };
   fitSignals: {
