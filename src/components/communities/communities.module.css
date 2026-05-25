@@ -1,0 +1,391 @@
+.shell {
+  --ink: #2a342e;
+  --muted: #657268;
+  --paper: #f7f4ec;
+  --panel: #fcfaf5;
+  --accent: #7b8f82;
+  --line: #d7ddd3;
+  --shadow: 0 8px 28px rgba(74, 97, 83, 0.08);
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem clamp(1rem, 4vw, 2.5rem);
+  border-bottom: 1px solid var(--line);
+  background: rgba(252, 250, 245, 0.92);
+  backdrop-filter: blur(6px);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.brand {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.navLinks {
+  display: flex;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+}
+
+.navLinks a {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #4d5b52;
+}
+
+.navLinks a[aria-current="page"] {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.35em;
+}
+
+.pageHeader {
+  padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 0.75rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.pageHeader h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+}
+
+.pageHeader p {
+  color: var(--muted);
+  max-width: 52ch;
+}
+
+.toolbar {
+  padding: 0.75rem clamp(1rem, 4vw, 2.5rem) 1rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  align-items: end;
+}
+
+.field {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.field select,
+.field input,
+.searchInput {
+  min-height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--ink);
+  padding: 0 0.7rem;
+  font-size: 0.9rem;
+}
+
+.searchRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+}
+
+.searchInput {
+  width: 100%;
+}
+
+.btn,
+.btnGhost {
+  border: 0;
+  border-radius: 10px;
+  min-height: 40px;
+  padding: 0 1rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.btn {
+  background: var(--accent);
+  color: #f9fcf9;
+}
+
+.btnGhost {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+
+.mapLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  gap: 0;
+  min-height: calc(100vh - 220px);
+  border-top: 1px solid var(--line);
+}
+
+.mapPane {
+  position: relative;
+  min-height: 420px;
+}
+
+.mapCanvas {
+  width: 100%;
+  height: 100%;
+  min-height: 420px;
+}
+
+.sidebar {
+  border-left: 1px solid var(--line);
+  background: var(--panel);
+  padding: 1rem;
+  overflow-y: auto;
+  max-height: calc(100vh - 220px);
+}
+
+.listLayout {
+  padding: 0 clamp(1rem, 4vw, 2.5rem) 2.5rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 0.9rem;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1rem;
+  display: grid;
+  gap: 0.45rem;
+  box-shadow: var(--shadow);
+  transition: border-color 0.15s ease;
+}
+
+.card:hover {
+  border-color: #b8c4b8;
+}
+
+.card h2,
+.card h3 {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+}
+
+.cardMeta {
+  font-size: 0.86rem;
+  color: var(--muted);
+}
+
+.cardTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.cardTags span {
+  font-size: 0.72rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  color: #586b5f;
+  background: #fcfcf8;
+}
+
+.scoreRow {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.scoreBadge {
+  background: #eef2eb;
+  border-radius: 8px;
+  padding: 0.2rem 0.45rem;
+  font-weight: 600;
+}
+
+.previewCard {
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 5;
+  background: rgba(252, 250, 245, 0.96);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1rem;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 0.5rem;
+}
+
+.previewCard h3 {
+  font-family: var(--font-serif);
+}
+
+.status {
+  padding: 2rem;
+  text-align: center;
+  color: var(--muted);
+}
+
+.error {
+  color: #8b4a44;
+  font-size: 0.9rem;
+}
+
+.detail {
+  width: min(880px, 92vw);
+  margin: 0 auto;
+  padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.detailHero {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.detailHero h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+}
+
+.section {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1.1rem 1.2rem;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.section h2 {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+}
+
+.scoreGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.5rem;
+}
+
+.scoreItem {
+  background: #f1f3ed;
+  border-radius: 10px;
+  padding: 0.55rem 0.65rem;
+  display: grid;
+  gap: 0.15rem;
+}
+
+.scoreItem span {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.scoreItem strong {
+  font-size: 1rem;
+}
+
+.mapPreview {
+  height: 220px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+
+.sourceList {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.sourceList a {
+  color: #4a6356;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  word-break: break-all;
+}
+
+.homeMapSection {
+  width: min(1120px, 92vw);
+  margin: 0 auto;
+  padding: 0 0 2.5rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.homeMapSection .sectionHeading h2 {
+  font-family: var(--font-serif);
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+}
+
+.homeMapFrame {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  min-height: 360px;
+}
+
+.homeMapActions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+  .mapLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    max-height: none;
+  }
+}
+
+@media (max-width: 680px) {
+  .nav {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filters {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}

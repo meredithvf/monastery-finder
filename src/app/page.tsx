@@ -3,6 +3,7 @@ import {
   DiscoveryProfileSection,
   DiscoveryProvider,
 } from "@/components/DiscoveryChat";
+import { HomeMapSection } from "@/components/communities/HomeMapSection";
 import styles from "./page.module.css";
 
 const featuredMonasteries = [
@@ -36,9 +37,8 @@ export default function Home() {
           <nav className={styles.nav}>
             <p className={styles.brand}>Monastery Finder</p>
             <div className={styles.navLinks}>
-              <a href="#">Discover</a>
-              <a href="#">Retreat Types</a>
-              <a href="#">Resources</a>
+              <a href="/map">Map</a>
+              <a href="/list">List</a>
             </div>
           </nav>
 
@@ -56,6 +56,8 @@ export default function Home() {
           <DiscoveryChatSection />
           <DiscoveryProfileSection />
         </section>
+
+        <HomeMapSection />
 
         <main className={styles.main}>
           <section className={styles.section}>

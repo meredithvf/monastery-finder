@@ -1,0 +1,237 @@
+"use client";
+
+import "mapbox-gl/dist/mapbox-gl.css";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import Map, { Marker, NavigationControl } from "react-map-gl/mapbox";
+import Supercluster from "supercluster";
+import type { CommunityListItem } from "@/lib/types/community";
+import { CommunityPreviewCard } from "./CommunityPreviewCard";
+import styles from "./communities.module.css";
+
+const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN ?? "";
+const US_CENTER = { longitude: -98.5, latitude: 39.5, zoom: 3.5 };
+
+type Props = {
+  communities: CommunityListItem[];
+  selectedId?: string | null;
+  onSelect?: (id: string | null) => void;
+  height?: string | number;
+  showPreview?: boolean;
+  initialZoom?: number;
+};
+
+type ClusterFeature = Supercluster.PointFeature<{
+  cluster: boolean;
+  communityId: string;
+  name: string;
+}>;
+
+export function CommunityMap({
+  communities,
+  selectedId,
+  onSelect,
+  height = "100%",
+  showPreview = true,
+  initialZoom,
+}: Props) {
+  const [viewState, setViewState] = useState({
+    longitude: US_CENTER.longitude,
+    latitude: US_CENTER.latitude,
+    zoom: initialZoom ?? US_CENTER.zoom,
+  });
+  const [bounds, setBounds] = useState<[number, number, number, number] | null>(
+    null,
+  );
+  const [zoom, setZoom] = useState(US_CENTER.zoom);
+
+  const points = useMemo<ClusterFeature[]>(() => {
+    return communities
+      .filter((c) => c.latitude != null && c.longitude != null)
+      .map((c) => ({
+        type: "Feature" as const,
+        properties: {
+          cluster: false,
+          communityId: c.id,
+          name: c.name,
+        },
+        geometry: {
+          type: "Point" as const,
+          coordinates: [c.longitude!, c.latitude!],
+        },
+      }));
+  }, [communities]);
+
+  const index = useMemo(() => {
+    const cluster = new Supercluster<{ communityId: string; name: string }>({
+      radius: 56,
+      maxZoom: 16,
+    });
+    cluster.load(points);
+    return cluster;
+  }, [points]);
+
+  const clusters = useMemo(() => {
+    if (!bounds) return points;
+    return index.getClusters(bounds, Math.floor(zoom)) as ClusterFeature[];
+  }, [bounds, zoom, index, points]);
+
+  const selected = useMemo(
+    () => communities.find((c) => c.id === selectedId) ?? null,
+    [communities, selectedId],
+  );
+
+  const handleMove = useCallback(
+    (evt: {
+      viewState: {
+        longitude: number;
+        latitude: number;
+        zoom: number;
+      };
+    }) => {
+      setViewState(evt.viewState);
+      setZoom(evt.viewState.zoom);
+    },
+    [],
+  );
+
+  useEffect(() => {
+    if (communities.length === 0) return;
+    const lats = communities.map((c) => c.latitude!).filter(Boolean);
+    const lngs = communities.map((c) => c.longitude!).filter(Boolean);
+    if (lats.length === 0) return;
+    const minLat = Math.min(...lats);
+    const maxLat = Math.max(...lats);
+    const minLng = Math.min(...lngs);
+    const maxLng = Math.max(...lngs);
+    setViewState((prev) => ({
+      ...prev,
+      longitude: (minLng + maxLng) / 2,
+      latitude: (minLat + maxLat) / 2,
+      zoom: initialZoom ?? (lats.length === 1 ? 8 : 4),
+    }));
+  }, [communities, initialZoom]);
+
+  if (!MAPBOX_TOKEN) {
+    return (
+      <div className={styles.status}>
+        <p>Add NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN to show the map.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.mapPane} style={{ height }}>
+      <Map
+        mapboxAccessToken={MAPBOX_TOKEN}
+        mapStyle="mapbox://styles/mapbox/light-v11"
+        {...viewState}
+        onMove={handleMove}
+        onMoveEnd={(evt) => {
+          const b = evt.target.getBounds();
+          if (!b) return;
+          setBounds([b.getWest(), b.getSouth(), b.getEast(), b.getNorth()]);
+        }}
+        onLoad={(evt) => {
+          const b = evt.target.getBounds();
+          if (!b) return;
+          setBounds([b.getWest(), b.getSouth(), b.getEast(), b.getNorth()]);
+        }}
+        style={{ width: "100%", height: "100%" }}
+        attributionControl={false}
+        reuseMaps
+      >
+        <NavigationControl position="top-right" showCompass={false} />
+
+        {clusters.map((feature) => {
+          const [lng, lat] = feature.geometry.coordinates;
+          const props = feature.properties as {
+            cluster?: boolean;
+            point_count?: number;
+            communityId?: string;
+            name?: string;
+          };
+          const isCluster = Boolean(props.cluster);
+          const count = isCluster ? (props.point_count ?? 1) : 1;
+
+          if (isCluster) {
+            return (
+              <Marker
+                key={`cluster-${feature.id}`}
+                longitude={lng}
+                latitude={lat}
+                anchor="center"
+                onClick={(e) => {
+                  e.originalEvent.stopPropagation();
+                  const expansionZoom = Math.min(
+                    index.getClusterExpansionZoom(Number(feature.id)),
+                    16,
+                  );
+                  setViewState((prev) => ({
+                    ...prev,
+                    longitude: lng,
+                    latitude: lat,
+                    zoom: expansionZoom,
+                  }));
+                }}
+              >
+                <div
+                  style={{
+                    width: 36 + Math.min(count, 20),
+                    height: 36 + Math.min(count, 20),
+                    borderRadius: "50%",
+                    background: "#7b8f82",
+                    color: "#fff",
+                    display: "grid",
+                    placeItems: "center",
+                    fontWeight: 700,
+                    fontSize: "0.85rem",
+                    border: "2px solid #fcfaf5",
+                    boxShadow: "0 4px 12px rgba(42,52,46,0.2)",
+                    cursor: "pointer",
+                  }}
+                >
+                  {count}
+                </div>
+              </Marker>
+            );
+          }
+
+          const id = props.communityId!;
+          const active = selectedId === id;
+          return (
+            <Marker
+              key={id}
+              longitude={lng}
+              latitude={lat}
+              anchor="bottom"
+              onClick={(e) => {
+                e.originalEvent.stopPropagation();
+                onSelect?.(id);
+              }}
+            >
+              <div
+                style={{
+                  width: 14,
+                  height: 14,
+                  borderRadius: "50%",
+                  background: active ? "#4a6356" : "#7b8f82",
+                  border: "2px solid #fcfaf5",
+                  boxShadow: "0 2px 8px rgba(42,52,46,0.25)",
+                  cursor: "pointer",
+                }}
+                title={props.name}
+              />
+            </Marker>
+          );
+        })}
+      </Map>
+
+      {showPreview && selected && (
+        <CommunityPreviewCard
+          item={selected}
+          onClose={() => onSelect?.(null)}
+        />
+      )}
+    </div>
+  );
+}

@@ -1,6 +1,12 @@
 :root {
   --background: #f7f4ec;
   --foreground: #2a342e;
+  --ink: #2a342e;
+  --muted: #657268;
+  --paper: #f7f4ec;
+  --panel: #fcfaf5;
+  --accent: #7b8f82;
+  --line: #d7ddd3;
 }
 
 html,
