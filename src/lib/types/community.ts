@@ -14,6 +14,7 @@ export type CommunityFeatures = {
   residential_option_available: BinaryFeature;
   long_term_residency_supported: BinaryFeature;
   guest_stay_supported: BinaryFeature;
+  lay_friendly_vs_monastic_oriented: ScoreUnit;
 };
 
 export type SocialFeatures = {
@@ -23,12 +24,11 @@ export type SocialFeatures = {
 
 export type AccessibilityFeatures = {
   beginner_friendly: ScoreUnit;
-  visitation_ease: ScoreUnit;
-  application_difficulty: ScoreUnit;
 };
 
-export type CostFeatures = {
-  cost_level: ScoreUnit;
+export type BudgetFeatures = {
+  /** 0 = free/donation-based, 1 = expensive */
+  budget: ScoreUnit;
   scholarship_available: ScoreUnit;
   volunteer_work_exchange_available: ScoreUnit;
 };
@@ -37,6 +37,18 @@ export type LifestyleFeatures = {
   urban_vs_rural: ScoreUnit;
   spartan_vs_comfortable: ScoreUnit;
   daily_structure_rigidity: ScoreUnit;
+  digital_friendly_vs_unplugged: ScoreUnit;
+};
+
+export type SpiritualOrientationFeatures = {
+  contemplative_vs_devotional: ScoreUnit;
+  mystical_vs_intellectual: ScoreUnit;
+  traditional_vs_modern: ScoreUnit;
+};
+
+export type ReadinessFeatures = {
+  /** 0 = casual, 1 = rigorous commitment */
+  seriousness_level: ScoreUnit;
 };
 
 export type CommunityFeatureGroups = {
@@ -44,8 +56,10 @@ export type CommunityFeatureGroups = {
   community: CommunityFeatures;
   social: SocialFeatures;
   accessibility: AccessibilityFeatures;
-  cost: CostFeatures;
+  budget: BudgetFeatures;
   lifestyle: LifestyleFeatures;
+  spiritual_orientation: SpiritualOrientationFeatures;
+  readiness: ReadinessFeatures;
 };
 
 export type ExtractionSignals = {

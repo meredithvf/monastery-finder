@@ -121,15 +121,15 @@ function ProfileView({
       );
     });
 
-  const practical = profile.practicalConstraints;
+  const practical = profile.practical_constraints;
   const practicalEntries = [
     ["Budget", practical.budget],
-    ["Visa needs", practical.visaNeeds],
-    ["Languages", practical.languageSupport?.join(", ")],
-    ["Dietary", practical.dietaryRestrictions?.join(", ")],
-    ["Accessibility", practical.accessibilityNeeds?.join(", ")],
-    ["Age", practical.ageConsiderations],
-    ["Family", practical.familyFriendliness],
+    ["Visa needs", practical.visa_needs],
+    ["Languages", practical.language_support?.join(", ")],
+    ["Dietary", practical.dietary_restrictions?.join(", ")],
+    ["Accessibility", practical.accessibility_needs?.join(", ")],
+    ["Age", practical.age_considerations],
+    ["Family", practical.family_friendliness],
   ].filter(([, v]) => v && String(v).trim().length > 0);
 
   return (
@@ -141,16 +141,16 @@ function ProfileView({
       <div className={styles.profileSection}>
         <h4>Spiritual orientation</h4>
         {renderSpectrums(
-          profile.spiritualOrientation as unknown as Record<string, number>,
-          "spiritualOrientation",
+          profile.spiritual_orientation as unknown as Record<string, number>,
+          "spiritual_orientation",
         )}
       </div>
 
       <div className={styles.profileSection}>
         <h4>Community structure</h4>
         {renderSpectrums(
-          profile.communityStructure as unknown as Record<string, number>,
-          "communityStructure",
+          profile.community_structure as unknown as Record<string, number>,
+          "community_structure",
         )}
       </div>
 
@@ -178,10 +178,10 @@ function ProfileView({
       <div className={styles.profileSection}>
         <h4>Readiness</h4>
         <p>
-          <strong>Intent:</strong> {profile.readiness.primaryIntent}
+          <strong>Intent:</strong> {profile.readiness.primary_intent}
         </p>
         <p>
-          <strong>Seriousness:</strong> {profile.readiness.seriousnessLevel} / 5
+          <strong>Seriousness:</strong> {profile.readiness.seriousness_level} / 5
         </p>
         {profile.readiness.notes && <p>{profile.readiness.notes}</p>}
       </div>

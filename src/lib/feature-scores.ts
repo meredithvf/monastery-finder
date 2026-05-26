@@ -32,19 +32,108 @@ export function isLegacyFeatureScores(raw: unknown): raw is LegacyFeatureScores 
   );
 }
 
+/** Nested rows that predate budget / spiritual_orientation / readiness groups. */
+function needsNestedFeatureMigration(raw: CommunityFeatureScores): boolean {
+  const features = raw.features as Record<string, unknown>;
+  return (
+    "cost" in features ||
+    !("budget" in features) ||
+    !("spiritual_orientation" in features) ||
+    !("readiness" in features)
+  );
+}
+
+function migrateNestedFeatureScores(
+  raw: CommunityFeatureScores,
+): CommunityFeatureScores {
+  const neutral = 0.5;
+  const f = raw.features as CommunityFeatureScores["features"] &
+    Record<string, Record<string, number | undefined>>;
+
+  const legacyCost = f.cost as
+    | {
+        cost_level?: number;
+        scholarship_available?: number;
+        volunteer_work_exchange_available?: number;
+      }
+    | undefined;
+
+  const legacyAccessibility = f.accessibility as
+    | { beginner_friendly?: number; visitation_ease?: number }
+    | undefined;
+
+  return {
+    ...raw,
+    features: {
+      practice: {
+        meditation_intensity: f.practice?.meditation_intensity ?? neutral,
+        silence_level: f.practice?.silence_level ?? neutral,
+        study_vs_practice_balance: f.practice?.study_vs_practice_balance ?? neutral,
+      },
+      community: {
+        communal_living_strength: f.community?.communal_living_strength ?? neutral,
+        residential_option_available:
+          (f.community?.residential_option_available as 0 | 1 | undefined) ?? 0,
+        long_term_residency_supported:
+          (f.community?.long_term_residency_supported as 0 | 1 | undefined) ?? 0,
+        guest_stay_supported:
+          (f.community?.guest_stay_supported as 0 | 1 | undefined) ?? 0,
+        lay_friendly_vs_monastic_oriented:
+          f.community?.lay_friendly_vs_monastic_oriented ?? neutral,
+      },
+      social: {
+        social_interaction_level: f.social?.social_interaction_level ?? neutral,
+        community_size_estimate: f.social?.community_size_estimate ?? neutral,
+      },
+      accessibility: {
+        beginner_friendly:
+          legacyAccessibility?.beginner_friendly ?? neutral,
+      },
+      budget: {
+        budget: legacyCost?.cost_level ?? neutral,
+        scholarship_available: legacyCost?.scholarship_available ?? neutral,
+        volunteer_work_exchange_available:
+          legacyCost?.volunteer_work_exchange_available ?? neutral,
+      },
+      lifestyle: {
+        urban_vs_rural: f.lifestyle?.urban_vs_rural ?? neutral,
+        spartan_vs_comfortable: f.lifestyle?.spartan_vs_comfortable ?? neutral,
+        daily_structure_rigidity: f.lifestyle?.daily_structure_rigidity ?? neutral,
+        digital_friendly_vs_unplugged:
+          f.lifestyle?.digital_friendly_vs_unplugged ?? neutral,
+      },
+      spiritual_orientation: {
+        contemplative_vs_devotional:
+          f.spiritual_orientation?.contemplative_vs_devotional ?? neutral,
+        mystical_vs_intellectual:
+          f.spiritual_orientation?.mystical_vs_intellectual ?? neutral,
+        traditional_vs_modern:
+          f.spiritual_orientation?.traditional_vs_modern ?? neutral,
+      },
+      readiness: {
+        seriousness_level: f.readiness?.seriousness_level ?? neutral,
+      },
+    },
+  };
+}
+
 export function parseFeatureScores(
   raw: CommunityFeatureScores | LegacyFeatureScores | null | undefined,
 ): CommunityFeatureScores | null {
   if (!raw) return null;
-  if (isCommunityFeatureScores(raw)) return raw;
-  if (!isLegacyFeatureScores(raw)) return null;
-  return legacyToCommunityFeatureScores(raw);
+  if (isLegacyFeatureScores(raw)) return legacyToCommunityFeatureScores(raw);
+  if (!isCommunityFeatureScores(raw)) return null;
+  if (needsNestedFeatureMigration(raw)) return migrateNestedFeatureScores(raw);
+  return raw;
 }
 
 function legacyToCommunityFeatureScores(
   legacy: LegacyFeatureScores,
 ): CommunityFeatureScores {
   const neutral = 0.5;
+  const budget =
+    legacy.cost_affordability != null ? 1 - legacy.cost_affordability : neutral;
+
   return {
     name: null,
     website_summary: null,
@@ -59,6 +148,7 @@ function legacyToCommunityFeatureScores(
         residential_option_available: 0,
         long_term_residency_supported: 0,
         guest_stay_supported: 0,
+        lay_friendly_vs_monastic_oriented: neutral,
       },
       social: {
         social_interaction_level: legacy.social_warmth ?? neutral,
@@ -66,14 +156,9 @@ function legacyToCommunityFeatureScores(
       },
       accessibility: {
         beginner_friendly: legacy.beginner_friendly_score ?? neutral,
-        visitation_ease: legacy.accessibility_score ?? neutral,
-        application_difficulty: neutral,
       },
-      cost: {
-        cost_level:
-          legacy.cost_affordability != null
-            ? 1 - legacy.cost_affordability
-            : neutral,
+      budget: {
+        budget,
         scholarship_available: neutral,
         volunteer_work_exchange_available: neutral,
       },
@@ -81,6 +166,15 @@ function legacyToCommunityFeatureScores(
         urban_vs_rural: legacy.rural_vs_urban_score ?? neutral,
         spartan_vs_comfortable: neutral,
         daily_structure_rigidity: neutral,
+        digital_friendly_vs_unplugged: neutral,
+      },
+      spiritual_orientation: {
+        contemplative_vs_devotional: neutral,
+        mystical_vs_intellectual: neutral,
+        traditional_vs_modern: neutral,
+      },
+      readiness: {
+        seriousness_level: neutral,
       },
     },
     signals: {
@@ -97,11 +191,11 @@ export function getBeginnerFriendlyScore(
   return scores?.features.accessibility.beginner_friendly ?? null;
 }
 
-/** 0 = expensive, 1 = affordable (inverse of cost_level). */
+/** 0 = expensive, 1 = affordable (inverse of `features.budget.budget`). */
 export function getCostAffordability(
   scores: CommunityFeatureScores | null,
 ): number | null {
-  const level = scores?.features.cost.cost_level;
+  const level = scores?.features.budget.budget;
   if (level == null) return null;
   return 1 - level;
 }
@@ -138,8 +232,10 @@ export const FEATURE_GROUP_LABELS = {
   community: "Community",
   social: "Social",
   accessibility: "Accessibility",
-  cost: "Cost",
+  budget: "Budget",
   lifestyle: "Lifestyle",
+  spiritual_orientation: "Spiritual orientation",
+  readiness: "Readiness",
 } as const;
 
 export const FEATURE_FIELD_LABELS: Record<string, string> = {
@@ -150,16 +246,20 @@ export const FEATURE_FIELD_LABELS: Record<string, string> = {
   residential_option_available: "Residential option",
   long_term_residency_supported: "Long-term residency",
   guest_stay_supported: "Guest stays",
+  lay_friendly_vs_monastic_oriented: "Lay vs monastic",
   social_interaction_level: "Social interaction",
   community_size_estimate: "Community size",
   beginner_friendly: "Beginner friendly",
-  visitation_ease: "Visitation ease",
-  application_difficulty: "Application difficulty",
-  cost_level: "Cost level",
+  budget: "Cost level",
   scholarship_available: "Scholarship available",
   volunteer_work_exchange_available: "Work exchange",
   urban_vs_rural: "Urban vs rural",
   spartan_vs_comfortable: "Spartan vs comfortable",
   daily_structure_rigidity: "Schedule rigidity",
+  digital_friendly_vs_unplugged: "Digital vs unplugged",
+  contemplative_vs_devotional: "Contemplative vs devotional",
+  mystical_vs_intellectual: "Mystical vs intellectual",
+  traditional_vs_modern: "Traditional vs modern",
+  seriousness_level: "Seriousness",
   extraction_confidence: "Extraction confidence",
 };

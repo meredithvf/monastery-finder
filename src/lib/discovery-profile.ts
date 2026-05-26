@@ -10,51 +10,51 @@ export type ProfileTitle = (typeof PROFILE_TITLES)[number];
 
 export interface SpectrumScores {
   /** 0 = left pole, 100 = right pole */
-  contemplativeVsDevotional: number;
-  mysticalVsIntellectual: number;
-  structuredVsExperiential: number;
-  traditionalVsModern: number;
-  asceticVsBalanced: number;
-  ritualHeavyVsMeditationHeavy: number;
+  contemplative_vs_devotional: number;
+  mystical_vs_intellectual: number;
+  structured_vs_experiential: number;
+  traditional_vs_modern: number;
+  ascetic_vs_balanced: number;
+  ritual_heavy_vs_meditation_heavy: number;
 }
 
 export interface CommunityScores {
-  communalVsPrivate: number;
-  silentVsSocial: number;
-  longTermVsRetreatBased: number;
-  layFriendlyVsMonasticOriented: number;
+  communal_vs_private: number;
+  silent_vs_social: number;
+  long_term_vs_retreat_based: number;
+  lay_friendly_vs_monastic_oriented: number;
 }
 
 export interface LifestyleScores {
-  urbanVsRural: number;
-  physicallyDemandingVsAccessible: number;
-  digitalFriendlyVsUnplugged: number;
-  strictSchedulesVsFlexible: number;
+  urban_vs_rural: number;
+  physically_demanding_vs_accessible: number;
+  digital_friendly_vs_unplugged: number;
+  strict_schedules_vs_flexible: number;
 }
 
 export interface PracticalConstraints {
   budget?: string;
-  visaNeeds?: string;
-  languageSupport?: string[];
-  dietaryRestrictions?: string[];
-  accessibilityNeeds?: string[];
-  ageConsiderations?: string;
-  familyFriendliness?: string;
+  visa_needs?: string;
+  language_support?: string[];
+  dietary_restrictions?: string[];
+  accessibility_needs?: string[];
+  age_considerations?: string;
+  family_friendliness?: string;
 }
 
 export interface ReadinessProfile {
-  primaryIntent: string;
-  seriousnessLevel: number;
+  primary_intent: string;
+  seriousness_level: number;
   notes?: string;
 }
 
 export interface UserDiscoveryProfile {
   title: ProfileTitle;
   summary: string;
-  spiritualOrientation: SpectrumScores;
-  communityStructure: CommunityScores;
+  spiritual_orientation: SpectrumScores;
+  community_structure: CommunityScores;
   lifestyle: LifestyleScores;
-  practicalConstraints: PracticalConstraints;
+  practical_constraints: PracticalConstraints;
   readiness: ReadinessProfile;
 }
 
@@ -68,7 +68,7 @@ export const DISCOVERY_PROFILE_TOOL = {
   function: {
     name: "submit_discovery_profile",
     description:
-      "Call only when you have enough information across spiritual orientation, community, lifestyle, practical constraints, and readiness to build a complete discovery profile.",
+      "Call only when you have enough information across spiritual orientation, community, lifestyle, practical constraints, and readiness to build a complete discovery profile. Use snake_case property names exactly as defined in the schema.",
     parameters: {
       type: "object",
       properties: {
@@ -82,112 +82,112 @@ export const DISCOVERY_PROFILE_TOOL = {
           description:
             "2-4 sentence narrative summary of who they are and what they are seeking.",
         },
-        spiritualOrientation: {
+        spiritual_orientation: {
           type: "object",
           properties: {
-            contemplativeVsDevotional: {
+            contemplative_vs_devotional: {
               type: "number",
               minimum: 0,
               maximum: 100,
             },
-            mysticalVsIntellectual: {
+            mystical_vs_intellectual: {
               type: "number",
               minimum: 0,
               maximum: 100,
             },
-            structuredVsExperiential: {
+            structured_vs_experiential: {
               type: "number",
               minimum: 0,
               maximum: 100,
             },
-            traditionalVsModern: { type: "number", minimum: 0, maximum: 100 },
-            asceticVsBalanced: { type: "number", minimum: 0, maximum: 100 },
-            ritualHeavyVsMeditationHeavy: {
+            traditional_vs_modern: { type: "number", minimum: 0, maximum: 100 },
+            ascetic_vs_balanced: { type: "number", minimum: 0, maximum: 100 },
+            ritual_heavy_vs_meditation_heavy: {
               type: "number",
               minimum: 0,
               maximum: 100,
             },
           },
           required: [
-            "contemplativeVsDevotional",
-            "mysticalVsIntellectual",
-            "structuredVsExperiential",
-            "traditionalVsModern",
-            "asceticVsBalanced",
-            "ritualHeavyVsMeditationHeavy",
+            "contemplative_vs_devotional",
+            "mystical_vs_intellectual",
+            "structured_vs_experiential",
+            "traditional_vs_modern",
+            "ascetic_vs_balanced",
+            "ritual_heavy_vs_meditation_heavy",
           ],
         },
-        communityStructure: {
+        community_structure: {
           type: "object",
           properties: {
-            communalVsPrivate: { type: "number", minimum: 0, maximum: 100 },
-            silentVsSocial: { type: "number", minimum: 0, maximum: 100 },
-            longTermVsRetreatBased: {
+            communal_vs_private: { type: "number", minimum: 0, maximum: 100 },
+            silent_vs_social: { type: "number", minimum: 0, maximum: 100 },
+            long_term_vs_retreat_based: {
               type: "number",
               minimum: 0,
               maximum: 100,
             },
-            layFriendlyVsMonasticOriented: {
+            lay_friendly_vs_monastic_oriented: {
               type: "number",
               minimum: 0,
               maximum: 100,
             },
           },
           required: [
-            "communalVsPrivate",
-            "silentVsSocial",
-            "longTermVsRetreatBased",
-            "layFriendlyVsMonasticOriented",
+            "communal_vs_private",
+            "silent_vs_social",
+            "long_term_vs_retreat_based",
+            "lay_friendly_vs_monastic_oriented",
           ],
         },
         lifestyle: {
           type: "object",
           properties: {
-            urbanVsRural: { type: "number", minimum: 0, maximum: 100 },
-            physicallyDemandingVsAccessible: {
+            urban_vs_rural: { type: "number", minimum: 0, maximum: 100 },
+            physically_demanding_vs_accessible: {
               type: "number",
               minimum: 0,
               maximum: 100,
             },
-            digitalFriendlyVsUnplugged: {
+            digital_friendly_vs_unplugged: {
               type: "number",
               minimum: 0,
               maximum: 100,
             },
-            strictSchedulesVsFlexible: {
+            strict_schedules_vs_flexible: {
               type: "number",
               minimum: 0,
               maximum: 100,
             },
           },
           required: [
-            "urbanVsRural",
-            "physicallyDemandingVsAccessible",
-            "digitalFriendlyVsUnplugged",
-            "strictSchedulesVsFlexible",
+            "urban_vs_rural",
+            "physically_demanding_vs_accessible",
+            "digital_friendly_vs_unplugged",
+            "strict_schedules_vs_flexible",
           ],
         },
-        practicalConstraints: {
+        practical_constraints: {
           type: "object",
           properties: {
             budget: { type: "string" },
-            visaNeeds: { type: "string" },
-            languageSupport: { type: "array", items: { type: "string" } },
-            dietaryRestrictions: { type: "array", items: { type: "string" } },
-            accessibilityNeeds: { type: "array", items: { type: "string" } },
-            ageConsiderations: { type: "string" },
-            familyFriendliness: { type: "string" },
+            visa_needs: { type: "string" },
+            language_support: { type: "array", items: { type: "string" } },
+            dietary_restrictions: { type: "array", items: { type: "string" } },
+            accessibility_needs: { type: "array", items: { type: "string" } },
+            age_considerations: { type: "string" },
+            family_friendliness: { type: "string" },
           },
         },
         readiness: {
           type: "object",
           properties: {
-            primaryIntent: {
+            primary_intent: {
               type: "string",
               description:
                 "e.g. casual curiosity, ordination, burnout recovery, long-term residency, spiritual crisis, deep practice",
             },
-            seriousnessLevel: {
+            seriousness_level: {
               type: "number",
               minimum: 1,
               maximum: 5,
@@ -196,16 +196,16 @@ export const DISCOVERY_PROFILE_TOOL = {
             },
             notes: { type: "string" },
           },
-          required: ["primaryIntent", "seriousnessLevel"],
+          required: ["primary_intent", "seriousness_level"],
         },
       },
       required: [
         "title",
         "summary",
-        "spiritualOrientation",
-        "communityStructure",
+        "spiritual_orientation",
+        "community_structure",
         "lifestyle",
-        "practicalConstraints",
+        "practical_constraints",
         "readiness",
       ],
     },
@@ -213,24 +213,24 @@ export const DISCOVERY_PROFILE_TOOL = {
 };
 
 export const SPECTRUM_LABELS = {
-  spiritualOrientation: {
-    contemplativeVsDevotional: ["Contemplative", "Devotional"],
-    mysticalVsIntellectual: ["Mystical", "Intellectual"],
-    structuredVsExperiential: ["Structured doctrine", "Experiential"],
-    traditionalVsModern: ["Traditional", "Modern"],
-    asceticVsBalanced: ["Ascetic", "Balanced"],
-    ritualHeavyVsMeditationHeavy: ["Ritual-heavy", "Meditation-heavy"],
+  spiritual_orientation: {
+    contemplative_vs_devotional: ["Contemplative", "Devotional"],
+    mystical_vs_intellectual: ["Mystical", "Intellectual"],
+    structured_vs_experiential: ["Structured doctrine", "Experiential"],
+    traditional_vs_modern: ["Traditional", "Modern"],
+    ascetic_vs_balanced: ["Ascetic", "Balanced"],
+    ritual_heavy_vs_meditation_heavy: ["Ritual-heavy", "Meditation-heavy"],
   },
-  communityStructure: {
-    communalVsPrivate: ["Communal", "Private"],
-    silentVsSocial: ["Silent", "Social"],
-    longTermVsRetreatBased: ["Long-term residency", "Retreat-based"],
-    layFriendlyVsMonasticOriented: ["Lay-friendly", "Monastic-oriented"],
+  community_structure: {
+    communal_vs_private: ["Communal", "Private"],
+    silent_vs_social: ["Silent", "Social"],
+    long_term_vs_retreat_based: ["Long-term residency", "Retreat-based"],
+    lay_friendly_vs_monastic_oriented: ["Lay-friendly", "Monastic-oriented"],
   },
   lifestyle: {
-    urbanVsRural: ["Urban", "Rural"],
-    physicallyDemandingVsAccessible: ["Physically demanding", "Accessible"],
-    digitalFriendlyVsUnplugged: ["Digital-friendly", "Unplugged"],
-    strictSchedulesVsFlexible: ["Strict schedules", "Flexible"],
+    urban_vs_rural: ["Urban", "Rural"],
+    physically_demanding_vs_accessible: ["Physically demanding", "Accessible"],
+    digital_friendly_vs_unplugged: ["Digital-friendly", "Unplugged"],
+    strict_schedules_vs_flexible: ["Strict schedules", "Flexible"],
   },
 } as const;
