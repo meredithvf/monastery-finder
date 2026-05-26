@@ -67,7 +67,6 @@ export type LegacyFeatureScores = {
   meditation_intensity?: number;
   communal_living_strength?: number;
   social_warmth?: number;
-  hierarchy_strictness?: number;
   beginner_friendly_score?: number;
   cost_affordability?: number;
   accessibility_score?: number;
@@ -229,7 +228,11 @@ export type CommunityProfileJson = {
   };
   evidence: {
     sources: Array<{ url: string; type: string }>;
-    fieldEvidence?: Array<{ field: string; snippet: string; sourceUrl?: string }>;
+    fieldEvidence?: Array<{
+      field: string;
+      snippet: string;
+      sourceUrl?: string;
+    }>;
   };
 };
 
@@ -303,7 +306,4 @@ export type CommunityFilters = {
   search?: string;
 };
 
-export type CommunitySort =
-  | "score"
-  | "distance"
-  | "beginner_friendly";
+export type CommunitySort = "score" | "distance" | "beginner_friendly";

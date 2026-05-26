@@ -20,7 +20,6 @@ export interface SpectrumScores {
 
 export interface CommunityScores {
   communalVsPrivate: number;
-  hierarchicalVsEgalitarian: number;
   silentVsSocial: number;
   longTermVsRetreatBased: number;
   layFriendlyVsMonasticOriented: number;
@@ -86,12 +85,28 @@ export const DISCOVERY_PROFILE_TOOL = {
         spiritualOrientation: {
           type: "object",
           properties: {
-            contemplativeVsDevotional: { type: "number", minimum: 0, maximum: 100 },
-            mysticalVsIntellectual: { type: "number", minimum: 0, maximum: 100 },
-            structuredVsExperiential: { type: "number", minimum: 0, maximum: 100 },
+            contemplativeVsDevotional: {
+              type: "number",
+              minimum: 0,
+              maximum: 100,
+            },
+            mysticalVsIntellectual: {
+              type: "number",
+              minimum: 0,
+              maximum: 100,
+            },
+            structuredVsExperiential: {
+              type: "number",
+              minimum: 0,
+              maximum: 100,
+            },
             traditionalVsModern: { type: "number", minimum: 0, maximum: 100 },
             asceticVsBalanced: { type: "number", minimum: 0, maximum: 100 },
-            ritualHeavyVsMeditationHeavy: { type: "number", minimum: 0, maximum: 100 },
+            ritualHeavyVsMeditationHeavy: {
+              type: "number",
+              minimum: 0,
+              maximum: 100,
+            },
           },
           required: [
             "contemplativeVsDevotional",
@@ -106,14 +121,20 @@ export const DISCOVERY_PROFILE_TOOL = {
           type: "object",
           properties: {
             communalVsPrivate: { type: "number", minimum: 0, maximum: 100 },
-            hierarchicalVsEgalitarian: { type: "number", minimum: 0, maximum: 100 },
             silentVsSocial: { type: "number", minimum: 0, maximum: 100 },
-            longTermVsRetreatBased: { type: "number", minimum: 0, maximum: 100 },
-            layFriendlyVsMonasticOriented: { type: "number", minimum: 0, maximum: 100 },
+            longTermVsRetreatBased: {
+              type: "number",
+              minimum: 0,
+              maximum: 100,
+            },
+            layFriendlyVsMonasticOriented: {
+              type: "number",
+              minimum: 0,
+              maximum: 100,
+            },
           },
           required: [
             "communalVsPrivate",
-            "hierarchicalVsEgalitarian",
             "silentVsSocial",
             "longTermVsRetreatBased",
             "layFriendlyVsMonasticOriented",
@@ -123,9 +144,21 @@ export const DISCOVERY_PROFILE_TOOL = {
           type: "object",
           properties: {
             urbanVsRural: { type: "number", minimum: 0, maximum: 100 },
-            physicallyDemandingVsAccessible: { type: "number", minimum: 0, maximum: 100 },
-            digitalFriendlyVsUnplugged: { type: "number", minimum: 0, maximum: 100 },
-            strictSchedulesVsFlexible: { type: "number", minimum: 0, maximum: 100 },
+            physicallyDemandingVsAccessible: {
+              type: "number",
+              minimum: 0,
+              maximum: 100,
+            },
+            digitalFriendlyVsUnplugged: {
+              type: "number",
+              minimum: 0,
+              maximum: 100,
+            },
+            strictSchedulesVsFlexible: {
+              type: "number",
+              minimum: 0,
+              maximum: 100,
+            },
           },
           required: [
             "urbanVsRural",
@@ -158,7 +191,8 @@ export const DISCOVERY_PROFILE_TOOL = {
               type: "number",
               minimum: 1,
               maximum: 5,
-              description: "1 = casual curiosity, 5 = vocational/committed path",
+              description:
+                "1 = casual curiosity, 5 = vocational/committed path",
             },
             notes: { type: "string" },
           },
@@ -189,7 +223,6 @@ export const SPECTRUM_LABELS = {
   },
   communityStructure: {
     communalVsPrivate: ["Communal", "Private"],
-    hierarchicalVsEgalitarian: ["Hierarchical", "Egalitarian"],
     silentVsSocial: ["Silent", "Social"],
     longTermVsRetreatBased: ["Long-term residency", "Retreat-based"],
     layFriendlyVsMonasticOriented: ["Lay-friendly", "Monastic-oriented"],

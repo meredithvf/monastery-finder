@@ -14,7 +14,6 @@ Your job is to have a natural conversation (not an interrogation) to understand 
 
 ### Community structure
 - communal vs private
-- hierarchical vs egalitarian
 - silent vs social
 - long-term residency vs retreat-based
 - lay-friendly vs monastic-oriented
