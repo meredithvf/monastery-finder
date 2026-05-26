@@ -4,9 +4,11 @@ import {
   getBeginnerFriendlyScore,
   getCostAffordability,
   getLegacyCompositeScore,
+  getOverallScore,
   getUrbanVsRuralScore,
   parseFeatureScores,
 } from "@/lib/feature-scores";
+import { isUnknownSentinel } from "@/lib/string-utils";
 import { resolveWebsiteContent } from "@/lib/website-content";
 import type {
   CommunityFilters,
@@ -18,8 +20,6 @@ import type {
   CommunitySort,
   CommunityWebsiteContent,
   CommunityWithRelations,
-  RuralUrban,
-  TriState,
 } from "@/lib/types/community";
 
 const COMMUNITY_SELECT = `
@@ -210,9 +210,7 @@ export function sortCommunities(
   const sorted = [...items];
   if (sort === "score") {
     sorted.sort(
-      (a, b) =>
-        (b.adjustedOverall ?? b.compositeScore ?? 0) -
-        (a.adjustedOverall ?? a.compositeScore ?? 0),
+      (a, b) => (getOverallScore(b) ?? 0) - (getOverallScore(a) ?? 0),
     );
   } else if (sort === "beginner_friendly") {
     sorted.sort(
@@ -245,12 +243,6 @@ export function sortCommunities(
   return sorted;
 }
 
-function isUnknownRegion(value: string | null | undefined): boolean {
-  if (!value?.trim()) return true;
-  const lower = value.trim().toLowerCase();
-  return lower === "unknown" || lower === "n/a";
-}
-
 export function toCommunityMatchInput(
   row: CommunityWithRelations,
 ): CommunityMatchInput {
@@ -261,7 +253,7 @@ export function toCommunityMatchInput(
     id: row.id,
     name: row.name,
     tradition: row.tradition,
-    region: region && !isUnknownRegion(region) ? region : null,
+    region: region && !isUnknownSentinel(region) ? region : null,
     features: scores?.feature_scores ?? null,
   };
 }
@@ -321,5 +313,3 @@ export async function fetchCommunityById(
 export function getUniqueTraditions(items: CommunityListItem[]): string[] {
   return [...new Set(items.map((i) => i.tradition).filter(Boolean))].sort();
 }
-
-export type { CommunityProfileJson, CommunityFilters, CommunitySort, RuralUrban, TriState };

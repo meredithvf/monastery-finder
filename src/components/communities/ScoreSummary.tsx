@@ -1,8 +1,9 @@
 import type { CommunityListItem } from "@/lib/types/community";
+import { getOverallScore } from "@/lib/feature-scores";
 import styles from "./communities.module.css";
 
 export function ScoreSummary({ item }: { item: CommunityListItem }) {
-  const overall = item.adjustedOverall ?? item.compositeScore;
+  const overall = getOverallScore(item);
   const beginner = item.beginnerFriendlyScore;
   const cost = item.costAffordability;
 

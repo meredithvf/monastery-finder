@@ -1,9 +1,9 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { DiscoveryProfileSummary } from "@/components/DiscoveryProfileSummary";
+import { CommunityMapLazy } from "@/components/communities/CommunityMapLazy";
 import { MatchResultCard } from "@/components/communities/MatchResultCard";
 import { SiteNav } from "@/components/communities/SiteNav";
 import styles from "@/components/communities/communities.module.css";
@@ -12,14 +12,6 @@ import type { DiscoveryMatchResponse } from "@/lib/discovery-match";
 import { loadDiscoveryProfile } from "@/lib/discovery-storage";
 import type { UserDiscoveryProfile } from "@/lib/discovery-profile";
 import type { CommunityListItem } from "@/lib/types/community";
-
-const CommunityMap = dynamic(
-  () =>
-    import("@/components/communities/CommunityMap").then((m) => ({
-      default: m.CommunityMap,
-    })),
-  { ssr: false, loading: () => <p className={styles.status}>Loading map…</p> },
-);
 
 export default function ResultsPageClient() {
   const [profile, setProfile] = useState<UserDiscoveryProfile | null>(null);
@@ -131,7 +123,7 @@ export default function ResultsPageClient() {
                 None of your top matches have map coordinates yet.
               </p>
             ) : (
-              <CommunityMap
+              <CommunityMapLazy
                 communities={mapCommunities}
                 selectedId={selectedId}
                 onSelect={setSelectedId}

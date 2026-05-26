@@ -5,7 +5,8 @@ import { CommunityFiltersBar } from "@/components/communities/CommunityFilters";
 import { SearchAndSort } from "@/components/communities/SearchAndSort";
 import { SiteNav } from "@/components/communities/SiteNav";
 import styles from "@/components/communities/communities.module.css";
-import { useCommunities, useGeolocation } from "@/hooks/useCommunities";
+import { useCommunities } from "@/hooks/useCommunities";
+import { useGeolocation } from "@/hooks/useGeolocation";
 import { useCommunityFilters } from "@/hooks/useCommunityFilters";
 
 export default function ListPageClient() {

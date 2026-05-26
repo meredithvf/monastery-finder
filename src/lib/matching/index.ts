@@ -1,8 +1,6 @@
 export {
   ALIGNMENT_RULES,
   ALIGNED_MATCHING_KEYS,
-  computeMatchScore,
-  cosineSimilarity,
   toAlignedCommunityVector,
   toAlignedUserVector,
   type AlignedMatchingKey,

@@ -5,28 +5,6 @@ import {
 } from "@/components/DiscoveryChat";
 import { HomeMapSection } from "@/components/communities/HomeMapSection";
 import styles from "./page.module.css";
-import btnStyles from "@/styles/buttons.module.css";
-
-const featuredMonasteries = [
-  {
-    name: "Abbey of Sainte-Marie",
-    location: "Provence, France",
-    tradition: "Benedictine",
-    environment: "Lavender fields, stone cloisters, and morning liturgy.",
-  },
-  {
-    name: "Monasterio de San Salvador",
-    location: "Galicia, Spain",
-    tradition: "Cistercian",
-    environment: "Forest hills, pilgrimage trails, and simple guest rooms.",
-  },
-  {
-    name: "St. Theophan Monastery",
-    location: "Meteora, Greece",
-    tradition: "Orthodox",
-    environment: "Mountain overlooks, candlelit chapel, and guided silence.",
-  },
-];
 
 export default function Home() {
   return (

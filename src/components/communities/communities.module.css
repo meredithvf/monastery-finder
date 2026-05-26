@@ -136,6 +136,19 @@
   box-shadow: 0 0 0 1px rgba(123, 143, 130, 0.6);
 }
 
+.sectionHeading h2 {
+  font-family: var(--font-serif);
+  font-size: clamp(1.55rem, 2.5vw, 2.5rem);
+  line-height: 1.15;
+  margin-bottom: 0.45rem;
+  max-width: 32ch;
+}
+
+.sectionHeading p {
+  color: var(--muted);
+  max-width: 68ch;
+}
+
 .field {
   display: grid;
   gap: 0.25rem;

@@ -1,17 +1,9 @@
 "use client";
 
-import dynamic from "next/dynamic";
+import { CommunityMapLazy } from "@/components/communities/CommunityMapLazy";
 import { useGeocodedCommunities } from "@/hooks/useGeocodedCommunities";
 import type { CommunityListItem } from "@/lib/types/community";
 import styles from "@/components/communities/communities.module.css";
-
-const CommunityMap = dynamic(
-  () =>
-    import("@/components/communities/CommunityMap").then((m) => ({
-      default: m.CommunityMap,
-    })),
-  { ssr: false, loading: () => <p className={styles.status}>Loading map…</p> },
-);
 
 export function CommunityDetailMap({ item }: { item: CommunityListItem }) {
   const [resolved] = useGeocodedCommunities([item]);
@@ -28,7 +20,7 @@ export function CommunityDetailMap({ item }: { item: CommunityListItem }) {
 
   return (
     <div className={styles.mapPreview}>
-      <CommunityMap
+      <CommunityMapLazy
         communities={[resolved]}
         selectedId={resolved.id}
         height={220}

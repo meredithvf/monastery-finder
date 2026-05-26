@@ -19,6 +19,7 @@ import {
 } from "@/lib/feature-scores";
 import { hasWebsiteContent } from "@/lib/website-content";
 import { createServerSupabaseClient } from "@/lib/supabase";
+import { isUnknownSentinel } from "@/lib/string-utils";
 import type {
   CommunityFeatureGroups,
   CommunityFeatureScores,
@@ -45,17 +46,13 @@ const STAY_OPTION_LABELS: Record<StayOption, string> = {
   volunteer: "Volunteer",
 };
 
-function isUnknown(value: string | null | undefined): boolean {
-  return !value || value.toLowerCase() === "unknown";
-}
-
 function formatTriState(value: TriState | undefined): string {
-  if (!value || value === "unknown") return "Unknown";
+  if (!value || isUnknownSentinel(value)) return "Unknown";
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
 function formatLevel(value: string | undefined): string {
-  if (!value || value === "unknown") return "Unknown";
+  if (!value || isUnknownSentinel(value)) return "Unknown";
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
@@ -67,19 +64,19 @@ function formatCommunityType(type: CommunityType | string): string {
 }
 
 function formatStudyVsPractice(value: string | undefined): string {
-  if (isUnknown(value)) return "Unknown";
+  if (isUnknownSentinel(value)) return "Unknown";
   if (value === "practice-heavy") return "Practice-heavy";
   if (value === "study") return "Study-focused";
   return value!.charAt(0).toUpperCase() + value!.slice(1);
 }
 
 function formatCommunityTone(value: string | undefined): string {
-  if (isUnknown(value)) return "Unknown";
+  if (isUnknownSentinel(value)) return "Unknown";
   return value!.charAt(0).toUpperCase() + value!.slice(1);
 }
 
 function formatHousing(value: string | undefined): string {
-  if (isUnknown(value)) return "Unknown";
+  if (isUnknownSentinel(value)) return "Unknown";
   return value!.charAt(0).toUpperCase() + value!.slice(1);
 }
 
@@ -126,15 +123,15 @@ function EtiquetteBlock({ profile }: { profile: CommunityProfileJson }) {
   if (!etiquette) return null;
 
   const items = [
-    !isUnknown(etiquette.dressCode) && {
+    !isUnknownSentinel(etiquette.dressCode) && {
       label: "Dress code",
       value: etiquette.dressCode!,
     },
-    !isUnknown(etiquette.communicationStyle) && {
+    !isUnknownSentinel(etiquette.communicationStyle) && {
       label: "Communication",
       value: etiquette.communicationStyle!,
     },
-    !isUnknown(etiquette.behaviorNotes) && {
+    !isUnknownSentinel(etiquette.behaviorNotes) && {
       label: "Behavior",
       value: etiquette.behaviorNotes!,
     },
@@ -152,7 +149,7 @@ function EtiquetteBlock({ profile }: { profile: CommunityProfileJson }) {
           <strong>{item.label}:</strong> {item.value}
         </p>
       ))}
-      {guidelines && !isUnknown(guidelines) && (
+      {guidelines && !isUnknownSentinel(guidelines) && (
         <div className={styles.pageContent} style={{ marginTop: "0.75rem" }}>
           {guidelines.split(/\n{2,}/).map((paragraph, i) => (
             <p key={i}>{paragraph.trim()}</p>
@@ -212,7 +209,7 @@ export default async function CommunityDetailPage({ params }: Props) {
 
   const locationLine = [
     formatLocation(community),
-    profile?.geographic?.region && !isUnknown(profile.geographic.region)
+    profile?.geographic?.region && !isUnknownSentinel(profile.geographic.region)
       ? profile.geographic.region
       : null,
   ]
@@ -267,21 +264,21 @@ export default async function CommunityDetailPage({ params }: Props) {
         {!showWebsiteSections && profile?.practice?.dailyLife && (
           <section className={styles.section}>
             <h2>Daily life</h2>
-            {!isUnknown(profile.practice.dailyLife.scheduleSummary) && (
+            {!isUnknownSentinel(profile.practice.dailyLife.scheduleSummary) && (
               <p>{profile.practice.dailyLife.scheduleSummary}</p>
             )}
             {profile.practice.dailyLife.typicalDay &&
-              !isUnknown(profile.practice.dailyLife.typicalDay) && (
+              !isUnknownSentinel(profile.practice.dailyLife.typicalDay) && (
                 <p>{profile.practice.dailyLife.typicalDay}</p>
               )}
             {profile.practice.dailyLife.workPractice &&
-              !isUnknown(profile.practice.dailyLife.workPractice) && (
+              !isUnknownSentinel(profile.practice.dailyLife.workPractice) && (
                 <p>
                   <strong>Work practice:</strong>{" "}
                   {profile.practice.dailyLife.workPractice}
                 </p>
               )}
-            {!isUnknown(profile.practice.dailyLife.silenceLevel) && (
+            {!isUnknownSentinel(profile.practice.dailyLife.silenceLevel) && (
               <p className={styles.cardMeta}>
                 Silence: {formatLevel(profile.practice.dailyLife.silenceLevel)}
               </p>
@@ -292,7 +289,7 @@ export default async function CommunityDetailPage({ params }: Props) {
         {!showWebsiteSections && profile?.practice?.practiceStyle && (
           <section className={styles.section}>
             <h2>Practice style</h2>
-            {!isUnknown(profile.practice.practiceStyle.meditationIntensity) && (
+            {!isUnknownSentinel(profile.practice.practiceStyle.meditationIntensity) && (
               <p>
                 Meditation intensity:{" "}
                 {formatLevel(
@@ -300,13 +297,13 @@ export default async function CommunityDetailPage({ params }: Props) {
                 )}
               </p>
             )}
-            {!isUnknown(profile.practice.practiceStyle.ritualLevel) && (
+            {!isUnknownSentinel(profile.practice.practiceStyle.ritualLevel) && (
               <p>
                 Ritual level:{" "}
                 {formatLevel(profile.practice.practiceStyle.ritualLevel)}
               </p>
             )}
-            {!isUnknown(profile.practice.practiceStyle.studyVsPractice) && (
+            {!isUnknownSentinel(profile.practice.practiceStyle.studyVsPractice) && (
               <p>
                 Study vs practice:{" "}
                 {formatStudyVsPractice(
@@ -314,11 +311,11 @@ export default async function CommunityDetailPage({ params }: Props) {
                 )}
               </p>
             )}
-            {!isUnknown(profile.practice.communityAtmosphere.tone) && (
+            {!isUnknownSentinel(profile.practice.communityAtmosphere.tone) && (
               <p>
                 Community tone:{" "}
                 {formatCommunityTone(profile.practice.communityAtmosphere.tone)}
-                {!isUnknown(
+                {!isUnknownSentinel(
                   profile.practice.communityAtmosphere.communalityLevel,
                 ) && (
                   <>
@@ -443,7 +440,7 @@ export default async function CommunityDetailPage({ params }: Props) {
               Housing:{" "}
               {formatHousing(profile.accessibility.logistics.housingAvailable)}
             </p>
-            {!isUnknown(profile.geographic.ruralUrban) && (
+            {!isUnknownSentinel(profile.geographic.ruralUrban) && (
               <p>Setting: {formatLevel(profile.geographic.ruralUrban)}</p>
             )}
             {profile.fitSignals.bestFor.length > 0 && (

@@ -225,26 +225,3 @@ export const DISCOVERY_PROFILE_TOOL = {
     },
   },
 };
-
-export const SPECTRUM_LABELS = {
-  spiritual_orientation: {
-    contemplative_vs_devotional: ["Contemplative", "Devotional"],
-    mystical_vs_intellectual: ["Mystical", "Intellectual"],
-    structured_vs_experiential: ["Structured doctrine", "Experiential"],
-    traditional_vs_modern: ["Traditional", "Modern"],
-    ascetic_vs_balanced: ["Ascetic", "Balanced"],
-    ritual_heavy_vs_meditation_heavy: ["Ritual-heavy", "Meditation-heavy"],
-  },
-  community_structure: {
-    communal_vs_private: ["Communal", "Private"],
-    silent_vs_social: ["Silent", "Social"],
-    long_term_vs_retreat_based: ["Long-term residency", "Retreat-based"],
-    lay_friendly_vs_monastic_oriented: ["Lay-friendly", "Monastic-oriented"],
-  },
-  lifestyle: {
-    urban_vs_rural: ["Urban", "Rural"],
-    physically_demanding_vs_accessible: ["Physically demanding", "Accessible"],
-    digital_friendly_vs_unplugged: ["Digital-friendly", "Unplugged"],
-    strict_schedules_vs_flexible: ["Strict schedules", "Flexible"],
-  },
-} as const;

@@ -1,7 +1,6 @@
 import type {
   CommunityFeatureScores,
   LegacyFeatureScores,
-  ScoreUnit,
 } from "@/lib/types/community";
 
 export function isCommunityFeatureScores(
@@ -214,9 +213,13 @@ export function getLegacyCompositeScore(
   return (raw as LegacyFeatureScores).composite_score ?? null;
 }
 
-export function formatScorePct(value: ScoreUnit | null | undefined): string {
-  if (value == null) return "—";
-  return `${Math.round(value * 100)}%`;
+type ScoredItem = {
+  adjustedOverall?: number | null;
+  compositeScore?: number | null;
+};
+
+export function getOverallScore(item: ScoredItem): number | null {
+  return item.adjustedOverall ?? item.compositeScore ?? null;
 }
 
 export function formatBinaryFeature(

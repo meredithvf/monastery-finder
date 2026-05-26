@@ -1,22 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { runMatchingPipeline } from "@/agents/matching/pipeline";
 import type { DiscoveryMatchResponse } from "@/lib/discovery-match";
-import type { UserDiscoveryProfile } from "@/lib/discovery-profile";
+import { isDiscoveryProfile } from "@/lib/discovery-profile-validation";
 import { fetchCommunities } from "@/lib/communities";
 import { createServerSupabaseClient } from "@/lib/supabase";
-
-function isDiscoveryProfile(value: unknown): value is UserDiscoveryProfile {
-  if (!value || typeof value !== "object") return false;
-  const p = value as UserDiscoveryProfile;
-  return (
-    typeof p.title === "string" &&
-    typeof p.summary === "string" &&
-    p.spiritual_orientation != null &&
-    p.community_structure != null &&
-    p.lifestyle != null &&
-    p.readiness != null
-  );
-}
 
 export async function POST(request: NextRequest) {
   let body: { profile?: unknown; topN?: number };
@@ -57,8 +44,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(response);
   } catch (err) {
-    const message =
-      err instanceof Error ? err.message : "Failed to compute matches.";
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error("Discovery match failed:", err);
+    return NextResponse.json(
+      { error: "Failed to compute matches." },
+      { status: 500 },
+    );
   }
 }

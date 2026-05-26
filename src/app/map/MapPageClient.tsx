@@ -1,8 +1,8 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import { CommunityFiltersBar } from "@/components/communities/CommunityFilters";
+import { CommunityMapLazy } from "@/components/communities/CommunityMapLazy";
 import { CommunityPreviewCard } from "@/components/communities/CommunityPreviewCard";
 import { SiteNav } from "@/components/communities/SiteNav";
 import styles from "@/components/communities/communities.module.css";
@@ -10,14 +10,6 @@ import btnStyles from "@/styles/buttons.module.css";
 import { useCommunities } from "@/hooks/useCommunities";
 import { useCommunityFilters } from "@/hooks/useCommunityFilters";
 import { isUSCommunity } from "@/lib/usMap";
-
-const CommunityMap = dynamic(
-  () =>
-    import("@/components/communities/CommunityMap").then((m) => ({
-      default: m.CommunityMap,
-    })),
-  { ssr: false, loading: () => <p className={styles.status}>Loading map…</p> },
-);
 
 export default function MapPageClient() {
   const { filters, updateFilter, resetFilters } = useCommunityFilters();
@@ -59,7 +51,7 @@ export default function MapPageClient() {
         {loading ? (
           <p className={styles.status}>Loading communities…</p>
         ) : (
-          <CommunityMap
+          <CommunityMapLazy
             communities={usMappable}
             selectedId={selectedId}
             onSelect={setSelectedId}

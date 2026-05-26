@@ -16,7 +16,10 @@ import type {
   ChatMessage,
   UserDiscoveryProfile,
 } from "@/lib/discovery-profile";
-import { saveDiscoveryProfile } from "@/lib/discovery-storage";
+import {
+  clearDiscoveryProfile,
+  saveDiscoveryProfile,
+} from "@/lib/discovery-storage";
 
 const INITIAL_MESSAGE: ChatMessage = {
   role: "assistant",
@@ -97,6 +100,7 @@ export function DiscoveryProvider({ children }: { children: ReactNode }) {
     setProfile(null);
     setError(null);
     setInput("");
+    clearDiscoveryProfile();
   }
 
   return (
@@ -246,15 +250,5 @@ export function DiscoveryProfileSection() {
         </div>
       </div>
     </section>
-  );
-}
-
-/** @deprecated Use DiscoveryProvider with DiscoveryChatSection and DiscoveryProfileSection */
-export default function DiscoveryChat() {
-  return (
-    <>
-      <DiscoveryChatSection />
-      <DiscoveryProfileSection />
-    </>
   );
 }

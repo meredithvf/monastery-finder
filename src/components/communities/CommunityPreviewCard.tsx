@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { formatLocation } from "@/lib/communities";
 import type { CommunityListItem } from "@/lib/types/community";
-import { ScoreSummary } from "./ScoreSummary";
 import styles from "./communities.module.css";
 import btnStyles from "@/styles/buttons.module.css";
 
