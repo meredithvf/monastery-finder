@@ -40,6 +40,10 @@ export interface PracticalConstraints {
   accessibility_needs?: string[];
   age_considerations?: string;
   family_friendliness?: string;
+  /** Geographic region preference for hard filtering (e.g. "Pacific Northwest"). */
+  region?: string;
+  /** Spiritual tradition preference for hard filtering (e.g. "Benedictine"). */
+  tradition?: string;
 }
 
 export interface ReadinessProfile {
@@ -80,7 +84,7 @@ export const DISCOVERY_PROFILE_TOOL = {
         summary: {
           type: "string",
           description:
-            "2-4 sentence narrative summary of who they are and what they are seeking.",
+            "2-3 sentence narrative in second person (you/your), describing what they are seeking and what matters to them.",
         },
         spiritual_orientation: {
           type: "object",
@@ -177,6 +181,16 @@ export const DISCOVERY_PROFILE_TOOL = {
             accessibility_needs: { type: "array", items: { type: "string" } },
             age_considerations: { type: "string" },
             family_friendliness: { type: "string" },
+            region: {
+              type: "string",
+              description:
+                "Preferred geographic region when the user states one; omit if not specified.",
+            },
+            tradition: {
+              type: "string",
+              description:
+                "Preferred spiritual tradition when the user states one; omit if not specified.",
+            },
           },
         },
         readiness: {

@@ -8,21 +8,21 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { useRouter } from "next/navigation";
+import { DiscoveryProfileView } from "@/components/DiscoveryProfileView";
 import styles from "./DiscoveryChat.module.css";
 import btnStyles from "@/styles/buttons.module.css";
-import {
-  SPECTRUM_LABELS,
-  type ChatMessage,
-  type UserDiscoveryProfile,
+import type {
+  ChatMessage,
+  UserDiscoveryProfile,
 } from "@/lib/discovery-profile";
+import { saveDiscoveryProfile } from "@/lib/discovery-storage";
 
 const INITIAL_MESSAGE: ChatMessage = {
   role: "assistant",
   content:
     "Welcome. I will ask a few questions about your spiritual interests, the kind of community you imagine, practical needs, and how seriously you are exploring — then I will shape a profile to guide your search. \n\n What draws you to monasteries or retreats right now?",
 };
-
-type SpectrumGroup = keyof typeof SPECTRUM_LABELS;
 
 type DiscoveryContextValue = {
   messages: ChatMessage[];
@@ -41,152 +41,11 @@ const DiscoveryContext = createContext<DiscoveryContextValue | null>(null);
 function useDiscovery() {
   const value = useContext(DiscoveryContext);
   if (!value) {
-    throw new Error("Discovery components must be used within DiscoveryProvider");
+    throw new Error(
+      "Discovery components must be used within DiscoveryProvider",
+    );
   }
   return value;
-}
-
-function SpectrumSlider({
-  left,
-  right,
-  value,
-  onChange,
-}: {
-  left: string;
-  right: string;
-  value: number;
-  onChange: (value: number) => void;
-}) {
-  return (
-    <div className={styles.spectrumRow}>
-      <div className={styles.spectrumLabels}>
-        <span>{left}</span>
-        <span>{right}</span>
-      </div>
-      <input
-        type="range"
-        min={0}
-        max={100}
-        step={1}
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className={styles.spectrumSlider}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={value}
-        aria-valuetext={`${value}% toward ${right}`}
-        aria-label={`${left} to ${right}`}
-      />
-    </div>
-  );
-}
-
-function ProfileView({
-  profile,
-  onChange,
-}: {
-  profile: UserDiscoveryProfile;
-  onChange: (profile: UserDiscoveryProfile) => void;
-}) {
-  function updateSpectrum(group: SpectrumGroup, key: string, value: number) {
-    onChange({
-      ...profile,
-      [group]: {
-        ...profile[group],
-        [key]: value,
-      },
-    });
-  }
-
-  const renderSpectrums = (
-    scores: Record<string, number>,
-    group: SpectrumGroup,
-  ) =>
-    (
-      Object.keys(SPECTRUM_LABELS[group]) as Array<
-        keyof (typeof SPECTRUM_LABELS)[typeof group]
-      >
-    ).map((key) => {
-      const labels = SPECTRUM_LABELS[group][key];
-      const value = scores[key as string];
-      if (value === undefined) return null;
-      return (
-        <SpectrumSlider
-          key={String(key)}
-          left={labels[0]}
-          right={labels[1]}
-          value={value}
-          onChange={(next) => updateSpectrum(group, key as string, next)}
-        />
-      );
-    });
-
-  const practical = profile.practical_constraints;
-  const practicalEntries = [
-    ["Budget", practical.budget],
-    ["Visa needs", practical.visa_needs],
-    ["Languages", practical.language_support?.join(", ")],
-    ["Dietary", practical.dietary_restrictions?.join(", ")],
-    ["Accessibility", practical.accessibility_needs?.join(", ")],
-    ["Age", practical.age_considerations],
-    ["Family", practical.family_friendliness],
-  ].filter(([, v]) => v && String(v).trim().length > 0);
-
-  return (
-    <div className={styles.profile}>
-      <p className={styles.profileLabel}>Your discovery profile</p>
-      <h3 className={styles.profileTitle}>{profile.title}</h3>
-      <p className={styles.profileSummary}>{profile.summary}</p>
-
-      <div className={styles.profileSection}>
-        <h4>Spiritual orientation</h4>
-        {renderSpectrums(
-          profile.spiritual_orientation as unknown as Record<string, number>,
-          "spiritual_orientation",
-        )}
-      </div>
-
-      <div className={styles.profileSection}>
-        <h4>Community structure</h4>
-        {renderSpectrums(
-          profile.community_structure as unknown as Record<string, number>,
-          "community_structure",
-        )}
-      </div>
-
-      <div className={styles.profileSection}>
-        <h4>Lifestyle</h4>
-        {renderSpectrums(
-          profile.lifestyle as unknown as Record<string, number>,
-          "lifestyle",
-        )}
-      </div>
-
-      {practicalEntries.length > 0 && (
-        <div className={styles.profileSection}>
-          <h4>Practical constraints</h4>
-          <ul className={styles.practicalList}>
-            {practicalEntries.map(([label, value]) => (
-              <li key={label}>
-                <strong>{label}:</strong> {value}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      <div className={styles.profileSection}>
-        <h4>Readiness</h4>
-        <p>
-          <strong>Intent:</strong> {profile.readiness.primary_intent}
-        </p>
-        <p>
-          <strong>Seriousness:</strong> {profile.readiness.seriousness_level} / 5
-        </p>
-        {profile.readiness.notes && <p>{profile.readiness.notes}</p>}
-      </div>
-    </div>
-  );
 }
 
 export function DiscoveryProvider({ children }: { children: ReactNode }) {
@@ -328,7 +187,6 @@ export function DiscoveryChatSection() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Share what you are looking for…"
               rows={2}
               disabled={loading}
               aria-label="Your message"
@@ -349,8 +207,15 @@ export function DiscoveryChatSection() {
 }
 
 export function DiscoveryProfileSection() {
-  const { profile, setProfile, startOver } = useDiscovery();
+  const { profile, startOver } = useDiscovery();
+  const router = useRouter();
   const profileRef = useRef<HTMLElement>(null);
+
+  function viewResults() {
+    if (!profile) return;
+    saveDiscoveryProfile(profile);
+    router.push("/discovery/results");
+  }
 
   useEffect(() => {
     if (!profile) return;
@@ -366,14 +231,19 @@ export function DiscoveryProfileSection() {
       aria-label="Your discovery profile"
     >
       <div className={styles.profilePanel}>
-        <ProfileView profile={profile} onChange={setProfile} />
-        <button
-          type="button"
-          className={btnStyles.btnGhost}
-          onClick={startOver}
-        >
-          Start over
-        </button>
+        <DiscoveryProfileView profile={profile} />
+        <div className={styles.profileActions}>
+          <button type="button" className={btnStyles.btn} onClick={viewResults}>
+            View my results
+          </button>
+          <button
+            type="button"
+            className={btnStyles.btnGhost}
+            onClick={startOver}
+          >
+            Start over
+          </button>
+        </div>
       </div>
     </section>
   );

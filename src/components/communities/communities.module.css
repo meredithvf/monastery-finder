@@ -68,6 +68,34 @@
   max-width: 52ch;
 }
 
+.pageHeaderMain {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.pageTitleRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.pageTitleRow h1 {
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.profileSummaryInline {
+  margin: 0;
+  flex: 1 1 16rem;
+  max-width: 52rem;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--muted);
+  text-align: right;
+}
+
 .toolbar {
   padding: 0.75rem clamp(1rem, 4vw, 2.5rem) 1rem;
   display: grid;
@@ -397,6 +425,91 @@
   word-break: break-all;
 }
 
+.resultsStatus {
+  padding: 0 clamp(1rem, 4vw, 2.5rem);
+}
+
+.sidebarHeading {
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+}
+
+.matchList {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.matchCard {
+  display: grid;
+  gap: 0.45rem;
+  padding: 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fffefc;
+  text-align: left;
+}
+
+.matchCardButton {
+  width: 100%;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+.matchCardSelected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.matchBadge {
+  background: var(--accent);
+  color: #f9fcf9;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+}
+
+.matchTitle {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.matchTitle a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.matchTitle a:hover {
+  text-decoration: underline;
+}
+
+.matchExplanation {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.matchExplanationCompact {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: var(--muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .homeMapSection {
   width: min(1120px, 92vw);
   margin: 0 auto;
@@ -426,6 +539,11 @@
 }
 
 @media (max-width: 900px) {
+  .profileSummaryInline {
+    text-align: left;
+    flex: 1 1 100%;
+  }
+
   .mapLayout {
     grid-template-columns: 1fr;
   }

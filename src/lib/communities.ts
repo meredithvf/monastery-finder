@@ -1,3 +1,4 @@
+import type { CommunityMatchInput } from "@/lib/matching/candidates";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   getBeginnerFriendlyScore,
@@ -232,6 +233,35 @@ export function sortCommunities(
     });
   }
   return sorted;
+}
+
+function isUnknownRegion(value: string | null | undefined): boolean {
+  if (!value?.trim()) return true;
+  const lower = value.trim().toLowerCase();
+  return lower === "unknown" || lower === "n/a";
+}
+
+export function toCommunityMatchInput(
+  row: CommunityWithRelations,
+): CommunityMatchInput {
+  const profile = parseProfile(row);
+  const scores = parseScores(row);
+  const region = profile?.geographic?.region;
+  return {
+    id: row.id,
+    name: row.name,
+    tradition: row.tradition,
+    region: region && !isUnknownRegion(region) ? region : null,
+    features: scores?.feature_scores ?? null,
+  };
+}
+
+export async function fetchCommunityMatchCandidates(
+  supabase: SupabaseClient,
+): Promise<CommunityMatchInput[]> {
+  const { data, error } = await supabase.from("communities").select(COMMUNITY_SELECT);
+  if (error) throw new Error(error.message);
+  return (data as CommunityWithRelations[]).map(toCommunityMatchInput);
 }
 
 export async function fetchCommunities(

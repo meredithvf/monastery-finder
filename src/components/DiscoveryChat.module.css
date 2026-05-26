@@ -121,8 +121,11 @@
   box-shadow: 0 6px 18px rgba(74, 97, 83, 0.05);
 }
 
-.profilePanel > button {
-  justify-self: start;
+.profileActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: center;
 }
 
 .profile {
