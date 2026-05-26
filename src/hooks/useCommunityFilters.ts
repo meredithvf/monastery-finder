@@ -9,6 +9,7 @@ const DEFAULT_FILTERS: CommunityFilters = {
   costRange: "any",
   setting: "any",
   search: "",
+  tags: [],
 };
 
 export function useCommunityFilters(initial?: Partial<CommunityFilters>) {
@@ -35,7 +36,8 @@ export function useCommunityFilters(initial?: Partial<CommunityFilters>) {
       (filters.beginnerFriendly && filters.beginnerFriendly !== "any") ||
       (filters.costRange && filters.costRange !== "any") ||
       (filters.setting && filters.setting !== "any") ||
-      Boolean(filters.search?.trim())
+      Boolean(filters.search?.trim()) ||
+      (filters.tags && filters.tags.length > 0)
     );
   }, [filters]);
 

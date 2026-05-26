@@ -318,6 +318,7 @@ export type CommunityFilters = {
   costRange?: "free" | "low" | "mid" | "high" | "any";
   setting?: "rural" | "urban" | "suburban" | "any";
   search?: string;
+  tags?: string[];
 };
 
 export type CommunitySort = "score" | "distance" | "beginner_friendly";

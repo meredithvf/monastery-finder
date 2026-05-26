@@ -178,6 +178,15 @@ function matchesSearch(item: CommunityListItem, search?: string): boolean {
   return haystack.includes(q);
 }
 
+function matchesTags(
+  item: CommunityListItem,
+  tags: CommunityFilters["tags"],
+): boolean {
+  if (!tags || tags.length === 0) return true;
+  const itemTags = item.tags.map((t) => t.toLowerCase());
+  return tags.every((tag) => itemTags.includes(tag.toLowerCase()));
+}
+
 export function applyCommunityFilters(
   items: CommunityListItem[],
   filters: CommunityFilters,
@@ -188,6 +197,7 @@ export function applyCommunityFilters(
     if (!matchesCostRange(item, filters.costRange)) return false;
     if (!matchesSetting(item, filters.setting)) return false;
     if (!matchesSearch(item, filters.search)) return false;
+    if (!matchesTags(item, filters.tags)) return false;
     return true;
   });
 }
