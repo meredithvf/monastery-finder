@@ -25,7 +25,9 @@ export async function runMatchingPipeline(
 ): Promise<MatchingPipelineResult> {
   const topN = input.topN ?? DEFAULT_TOP_N;
   const constraints = extractHardConstraints(input.userProfile);
-  const candidates = await fetchCommunityMatchCandidates(supabase);
+  const candidates =
+    input.candidates ??
+    (await fetchCommunityMatchCandidates(supabase));
   const ranked = rankCommunities(input.userProfile, candidates, { constraints });
 
   return {

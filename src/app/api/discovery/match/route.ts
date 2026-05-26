@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { runMatchingPipeline } from "@/agents/matching/pipeline";
 import type { DiscoveryMatchResponse } from "@/lib/discovery-match";
 import { isDiscoveryProfile } from "@/lib/discovery-profile-validation";
-import { fetchCommunities } from "@/lib/communities";
+import { fetchCommunitiesForDiscoveryMatch } from "@/lib/community-queries";
 import { createServerSupabaseClient } from "@/lib/supabase";
 
 export async function POST(request: NextRequest) {
@@ -27,18 +27,20 @@ export async function POST(request: NextRequest) {
 
   try {
     const supabase = createServerSupabaseClient();
-    const [pipeline, communities] = await Promise.all([
-      runMatchingPipeline(supabase, { userProfile: body.profile, topN }),
-      fetchCommunities(supabase),
-    ]);
+    const { candidates, listItemById } =
+      await fetchCommunitiesForDiscoveryMatch(supabase);
+    const pipeline = await runMatchingPipeline(supabase, {
+      userProfile: body.profile,
+      topN,
+      candidates,
+    });
 
-    const byId = new Map(communities.map((c) => [c.id, c]));
     const response: DiscoveryMatchResponse = {
       totalCandidates: pipeline.totalCandidates,
       totalAfterConstraints: pipeline.totalAfterConstraints,
       ranked: pipeline.ranked.map((match) => ({
         ...match,
-        community: byId.get(match.id) ?? null,
+        community: listItemById.get(match.id) ?? null,
       })),
     };
 
