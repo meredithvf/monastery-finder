@@ -46,10 +46,10 @@ export default function Home() {
           <div className={styles.heroContent}>
             <h1>Monasteries. Convents. Temples.</h1>
             <p className={styles.subtitle}>
-              Take a weekend christian retreat, or live a year at a buddhist
-              monastery. Find the place where your soul needs to be.
+              Maybe you are looking to deepend your spirituality. Maybe you are
+              looking for religion. Maybe you just need a break from work. Find
+              where you need to be.
             </p>
-
           </div>
         </header>
 
@@ -59,49 +59,6 @@ export default function Home() {
         </section>
 
         <HomeMapSection />
-
-        <main className={styles.main}>
-          <section className={styles.section}>
-            <div className={styles.sectionHeading}>
-              <p className={styles.sectionLabel}>Featured stays</p>
-              <h2>
-                Monasteries selected for peaceful settings and welcoming hosts.
-              </h2>
-              <p>
-                A curated shortlist inspired by seasonal weather, accessibility,
-                and contemplative rhythm.
-              </p>
-            </div>
-            <div className={styles.cardGrid}>
-              {featuredMonasteries.map((monastery) => (
-                <article key={monastery.name} className={styles.card}>
-                  <p className={styles.cardTradition}>{monastery.tradition}</p>
-                  <h3>{monastery.name}</h3>
-                  <p className={styles.cardLocation}>{monastery.location}</p>
-                  <p>{monastery.environment}</p>
-                  <button type="button" className={`${btnStyles.btn} ${styles.cardAction}`}>
-                    View retreat
-                  </button>
-                </article>
-              ))}
-            </div>
-          </section>
-
-          <section className={`${styles.section} ${styles.secondarySection}`}>
-            <div className={styles.sectionHeading}>
-              <p className={styles.sectionLabel}>Browse by atmosphere</p>
-              <h2>Choose the feeling you want to travel into.</h2>
-            </div>
-            <div className={styles.chips}>
-              <span>Mountain quiet</span>
-              <span>Coastal breeze</span>
-              <span>Forest solitude</span>
-              <span>Ancient architecture</span>
-              <span>Liturgical music</span>
-              <span>Pilgrimage routes</span>
-            </div>
-          </section>
-        </main>
       </div>
     </DiscoveryProvider>
   );

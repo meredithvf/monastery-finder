@@ -95,7 +95,7 @@ export default function ResultsPageClient() {
   }
 
   return (
-    <div className={styles.shell}>
+    <div className={`${styles.shell} ${styles.resultsShell}`}>
       <SiteNav />
       <header className={styles.pageHeader}>
         <div className={styles.pageHeaderMain}>
@@ -103,38 +103,31 @@ export default function ResultsPageClient() {
             <h1>Your matches</h1>
             {profile && <DiscoveryProfileSummary profile={profile} />}
           </div>
-          {matchData && !loading && (
-            <p className={styles.cardMeta}>
-              {matchData.ranked.length} shown ·{" "}
-              {matchData.totalAfterConstraints} passed filters ·{" "}
-              {matchData.totalCandidates} in directory
-            </p>
-          )}
         </div>
       </header>
 
-      {error && (
-        <p className={`${styles.error} ${styles.resultsStatus}`}>{error}</p>
-      )}
+      <div className={styles.resultsBody}>
+        {error && (
+          <p className={`${styles.error} ${styles.resultsStatus}`}>{error}</p>
+        )}
 
-      {loading && (
-        <p className={`${styles.status} ${styles.resultsStatus}`}>
-          Finding your best matches…
-        </p>
-      )}
+        {loading && (
+          <p className={`${styles.status} ${styles.resultsStatus}`}>
+            Finding your best matches…
+          </p>
+        )}
 
-      {!loading && matchData && matchData.ranked.length === 0 && (
-        <p className={`${styles.status} ${styles.resultsStatus}`}>
-          No communities matched your filters. Try adjusting region or tradition
-          preferences on the home page.
-        </p>
-      )}
+        {!loading && matchData && matchData.ranked.length === 0 && (
+          <p className={`${styles.status} ${styles.resultsStatus}`}>
+            No communities matched your filters. Try adjusting region or
+            tradition preferences on the home page.
+          </p>
+        )}
 
-      {!loading && matchData && matchData.ranked.length > 0 && (
-        <div className={styles.mapLayout}>
-          <div className={styles.mapPane}>
+        {!loading && matchData && matchData.ranked.length > 0 && (
+          <div className={`${styles.mapLayout} ${styles.resultsMapLayout}`}>
             {mapCommunities.length === 0 ? (
-              <p className={styles.status}>
+              <p className={styles.resultsMapEmpty}>
                 None of your top matches have map coordinates yet.
               </p>
             ) : (
@@ -142,27 +135,28 @@ export default function ResultsPageClient() {
                 communities={mapCommunities}
                 selectedId={selectedId}
                 onSelect={setSelectedId}
-                height="calc(100vh - 220px)"
+                height="100%"
                 showPreview={false}
+                fitAllOnLoad={false}
               />
             )}
+            <aside className={styles.sidebar} aria-label="Ranked matches">
+              <p className={styles.sidebarHeading}>Ranked matches</p>
+              <div className={styles.matchList}>
+                {matchData.ranked.map((match) => (
+                  <MatchResultCard
+                    key={match.id}
+                    match={match}
+                    compact
+                    selected={match.id === selectedId}
+                    onSelect={() => setSelectedId(match.id)}
+                  />
+                ))}
+              </div>
+            </aside>
           </div>
-          <aside className={styles.sidebar} aria-label="Ranked matches">
-            <p className={styles.sidebarHeading}>Ranked matches</p>
-            <div className={styles.matchList}>
-              {matchData.ranked.map((match) => (
-                <MatchResultCard
-                  key={match.id}
-                  match={match}
-                  compact
-                  selected={match.id === selectedId}
-                  onSelect={() => setSelectedId(match.id)}
-                />
-              ))}
-            </div>
-          </aside>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

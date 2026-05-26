@@ -1,7 +1,7 @@
 import type { UserDiscoveryProfile } from "@/lib/discovery-profile";
 import styles from "@/components/communities/communities.module.css";
 
-/** Profile summary inline beside a page title. */
+/** Profile summary beneath a page title. */
 export function DiscoveryProfileSummary({
   profile,
 }: {

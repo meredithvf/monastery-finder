@@ -10,16 +10,44 @@ import btnStyles from "@/styles/buttons.module.css";
 type Props = {
   item: CommunityListItem;
   onClose?: () => void;
+  /** Short text for overlay previews on the map canvas. */
   compact?: boolean;
+  /** Expanded card inside the map page sidebar list. */
+  embedded?: boolean;
 };
 
-export function CommunityPreviewCard({ item, onClose, compact }: Props) {
+export function CommunityPreviewCard({
+  item,
+  onClose,
+  compact,
+  embedded,
+}: Props) {
+  const rootClass = embedded
+    ? styles.sidebarPreviewCard
+    : compact
+      ? undefined
+      : styles.previewCard;
+
+  const descriptionLimit = compact ? 120 : embedded ? undefined : 200;
+
   return (
-    <div className={compact ? undefined : styles.previewCard}>
-      <div style={{ display: "flex", justifyContent: "space-between", gap: "0.5rem" }}>
+    <div className={rootClass || undefined}>
+      {onClose && (
+        <button
+          type="button"
+          className={styles.previewCardClose}
+          onClick={onClose}
+          aria-label="Collapse preview"
+        >
+          ×
+        </button>
+      )}
+      <div className={styles.previewCardHeader}>
         <div>
           <p className={styles.cardMeta}>{item.tradition}</p>
-          <h3>{item.name}</h3>
+          <h3 className={embedded ? styles.previewCardTitle : undefined}>
+            {item.name}
+          </h3>
           <p className={styles.cardMeta}>
             {formatLocation({
               city: item.city,
@@ -28,21 +56,21 @@ export function CommunityPreviewCard({ item, onClose, compact }: Props) {
             })}
           </p>
         </div>
-        {onClose && (
-          <button
-            type="button"
-            className={btnStyles.btnGhost}
-            onClick={onClose}
-            aria-label="Close preview"
-          >
-            Close
-          </button>
-        )}
       </div>
       {item.shortDescription && (
-        <p>{item.shortDescription.slice(0, compact ? 120 : 200)}</p>
+        <p className={embedded ? styles.previewDescription : undefined}>
+          {descriptionLimit != null
+            ? item.shortDescription.slice(0, descriptionLimit)
+            : item.shortDescription}
+        </p>
       )}
-      <ScoreSummary item={item} />
+      {embedded && item.tags.length > 0 && (
+        <div className={styles.cardTags}>
+          {item.tags.slice(0, 4).map((tag) => (
+            <span key={tag}>{tag}</span>
+          ))}
+        </div>
+      )}
       <Link href={`/community/${item.id}`} className={btnStyles.btn}>
         View full profile
       </Link>

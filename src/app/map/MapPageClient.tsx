@@ -24,25 +24,19 @@ export default function MapPageClient() {
   const { filtered, mappable, traditions, loading, error } = useCommunities({
     filters,
   });
-  const usFiltered = useMemo(
-    () => filtered.filter(isUSCommunity),
-    [filtered],
-  );
-  const usMappable = useMemo(
-    () => mappable.filter(isUSCommunity),
-    [mappable],
-  );
+  const usFiltered = useMemo(() => filtered.filter(isUSCommunity), [filtered]);
+  const usMappable = useMemo(() => mappable.filter(isUSCommunity), [mappable]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const selected = usFiltered.find((c) => c.id === selectedId) ?? null;
 
   return (
-    <div className={styles.shell}>
+    <div className={`${styles.shell} ${styles.mapPageShell}`}>
       <SiteNav />
       <header className={styles.pageHeader}>
         <h1>Map</h1>
         <p>
-          Clustered markers at a distance; click a community for a quick
-          preview, then open the full profile.
+          Browse communities in the list or on the map — select one to expand a
+          profile preview.
         </p>
       </header>
 
@@ -61,46 +55,56 @@ export default function MapPageClient() {
         )}
       </div>
 
-      <div className={styles.mapLayout}>
-        <div className={styles.mapPane}>
+      <div className={`${styles.mapLayout} ${styles.mapPageLayout}`}>
+        {loading ? (
+          <p className={styles.status}>Loading communities…</p>
+        ) : (
+          <CommunityMap
+            communities={usMappable}
+            selectedId={selectedId}
+            onSelect={setSelectedId}
+            height="100%"
+            showPreview={false}
+            restrictToUS
+          />
+        )}
+        <aside className={styles.sidebar} aria-label="Community list">
           {loading ? (
-            <p className={styles.status}>Loading communities…</p>
-          ) : (
-            <CommunityMap
-              communities={usMappable}
-              selectedId={selectedId}
-              onSelect={setSelectedId}
-              height="calc(100vh - 220px)"
-              showPreview={false}
-              restrictToUS
-            />
-          )}
-        </div>
-        <aside className={styles.sidebar}>
-          {selected ? (
-            <CommunityPreviewCard
-              item={selected}
-              onClose={() => setSelectedId(null)}
-              compact
-            />
-          ) : (
+            <p className={styles.status}>Loading…</p>
+          ) : usFiltered.length === 0 ? (
             <p className={styles.cardMeta}>
-              Select a marker to preview a community.
+              No communities match your filters.
             </p>
+          ) : (
+            <div className={styles.mapSidebarList}>
+              {usFiltered.map((item) => {
+                const isSelected = item.id === selectedId;
+                return (
+                  <div key={item.id} className={styles.mapListRow}>
+                    <button
+                      type="button"
+                      className={`${btnStyles.btnGhost} ${styles.mapListButton} ${
+                        isSelected ? styles.mapListButtonSelected : ""
+                      }`}
+                      onClick={() => setSelectedId(item.id)}
+                      aria-expanded={isSelected}
+                    >
+                      {item.name}
+                    </button>
+                    {isSelected && selected && (
+                      <div className={styles.mapInlinePreview}>
+                        <CommunityPreviewCard
+                          item={selected}
+                          embedded
+                          onClose={() => setSelectedId(null)}
+                        />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           )}
-          <div style={{ marginTop: "1rem", display: "grid", gap: "0.5rem" }}>
-            {usFiltered.slice(0, 12).map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className={btnStyles.btnGhost}
-                style={{ textAlign: "left" }}
-                onClick={() => setSelectedId(item.id)}
-              >
-                {item.name}
-              </button>
-            ))}
-          </div>
         </aside>
       </div>
     </div>

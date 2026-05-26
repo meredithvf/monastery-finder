@@ -29,7 +29,6 @@ export function HomeMapSection() {
   return (
     <section className={styles.homeMapSection} aria-label="Explore on map">
       <div className={pageStyles.sectionHeading}>
-        <p className={pageStyles.sectionLabel}>Explore communities</p>
         <h2>Explore Communities</h2>
       </div>
 

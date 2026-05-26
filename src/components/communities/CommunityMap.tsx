@@ -1,9 +1,10 @@
 "use client";
 
 import "mapbox-gl/dist/mapbox-gl.css";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import Map, { Marker, NavigationControl } from "react-map-gl/mapbox";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Map, { Marker, NavigationControl, type MapRef } from "react-map-gl/mapbox";
 import Supercluster from "supercluster";
+import { spreadColocatedCoordinates } from "@/lib/map-marker-spread";
 import type { CommunityListItem } from "@/lib/types/community";
 import { US_MAP_CENTER, US_MAX_BOUNDS } from "@/lib/usMap";
 import { CommunityPreviewCard } from "./CommunityPreviewCard";
@@ -19,7 +20,13 @@ type Props = {
   showPreview?: boolean;
   initialZoom?: number;
   restrictToUS?: boolean;
+  /** When false, skip auto-fitting all markers on load (use with selection fly-to). */
+  fitAllOnLoad?: boolean;
+  /** Zoom level when flying to a selected community. */
+  selectedZoom?: number;
 };
+
+const DEFAULT_SELECTED_ZOOM = 10;
 
 type ClusterFeature = Supercluster.PointFeature<{
   cluster: boolean;
@@ -35,7 +42,10 @@ export function CommunityMap({
   showPreview = true,
   initialZoom,
   restrictToUS = false,
+  fitAllOnLoad = true,
+  selectedZoom = DEFAULT_SELECTED_ZOOM,
 }: Props) {
+  const mapRef = useRef<MapRef>(null);
   const [viewState, setViewState] = useState({
     longitude: US_MAP_CENTER.longitude,
     latitude: US_MAP_CENTER.latitude,
@@ -46,10 +56,35 @@ export function CommunityMap({
   );
   const [zoom, setZoom] = useState(US_MAP_CENTER.zoom);
 
+  const mappable = useMemo(
+    () =>
+      communities.filter(
+        (c): c is CommunityListItem & { latitude: number; longitude: number } =>
+          c.latitude != null && c.longitude != null,
+      ),
+    [communities],
+  );
+
+  const displayPositions = useMemo(
+    () =>
+      spreadColocatedCoordinates(
+        mappable.map((c) => ({
+          id: c.id,
+          longitude: c.longitude,
+          latitude: c.latitude,
+        })),
+        zoom,
+      ),
+    [mappable, zoom],
+  );
+
   const points = useMemo<ClusterFeature[]>(() => {
-    return communities
-      .filter((c) => c.latitude != null && c.longitude != null)
-      .map((c) => ({
+    return mappable.map((c) => {
+      const pos = displayPositions.get(c.id) ?? {
+        longitude: c.longitude,
+        latitude: c.latitude,
+      };
+      return {
         type: "Feature" as const,
         properties: {
           cluster: false,
@@ -58,10 +93,11 @@ export function CommunityMap({
         },
         geometry: {
           type: "Point" as const,
-          coordinates: [c.longitude!, c.latitude!],
+          coordinates: [pos.longitude, pos.latitude],
         },
-      }));
-  }, [communities]);
+      };
+    });
+  }, [mappable, displayPositions]);
 
   const index = useMemo(() => {
     const cluster = new Supercluster<{ communityId: string; name: string }>({
@@ -96,8 +132,18 @@ export function CommunityMap({
     [],
   );
 
+  const flyToSelected = useCallback(() => {
+    if (!selected?.latitude || !selected?.longitude) return;
+    mapRef.current?.flyTo({
+      center: [selected.longitude, selected.latitude],
+      zoom: selectedZoom,
+      duration: 800,
+      essential: true,
+    });
+  }, [selected, selectedZoom]);
+
   useEffect(() => {
-    if (restrictToUS) return;
+    if (!fitAllOnLoad || restrictToUS) return;
     if (communities.length === 0) return;
     const lats = communities.map((c) => c.latitude!).filter(Boolean);
     const lngs = communities.map((c) => c.longitude!).filter(Boolean);
@@ -112,7 +158,11 @@ export function CommunityMap({
       latitude: (minLat + maxLat) / 2,
       zoom: initialZoom ?? (lats.length === 1 ? 8 : 4),
     }));
-  }, [communities, initialZoom, restrictToUS]);
+  }, [communities, initialZoom, restrictToUS, fitAllOnLoad]);
+
+  useEffect(() => {
+    flyToSelected();
+  }, [selectedId, flyToSelected]);
 
   if (!MAPBOX_TOKEN) {
     return (
@@ -125,6 +175,7 @@ export function CommunityMap({
   return (
     <div className={styles.mapPane} style={{ height }}>
       <Map
+        ref={mapRef}
         mapboxAccessToken={MAPBOX_TOKEN}
         mapStyle="mapbox://styles/mapbox/light-v11"
         {...viewState}
@@ -136,8 +187,10 @@ export function CommunityMap({
         }}
         onLoad={(evt) => {
           const b = evt.target.getBounds();
-          if (!b) return;
-          setBounds([b.getWest(), b.getSouth(), b.getEast(), b.getNorth()]);
+          if (b) {
+            setBounds([b.getWest(), b.getSouth(), b.getEast(), b.getNorth()]);
+          }
+          flyToSelected();
         }}
         style={{ width: "100%", height: "100%" }}
         attributionControl={false}
