@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CommunityFiltersBar } from "@/components/communities/CommunityFilters";
 import { CommunityMapLazy } from "@/components/communities/CommunityMapLazy";
 import { CommunityPreviewCard } from "@/components/communities/CommunityPreviewCard";
@@ -26,6 +26,30 @@ export default function MapPageClient() {
   const usFiltered = useMemo(() => filtered.filter(isUSCommunity), [filtered]);
   const usMappable = useMemo(() => mappable.filter(isUSCommunity), [mappable]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const rowRefs = useRef(new Map<string, HTMLDivElement>());
+  const scrollListToSelection = useRef(false);
+
+  useEffect(() => {
+    if (!selectedId || !scrollListToSelection.current) return;
+    scrollListToSelection.current = false;
+
+    const row = rowRefs.current.get(selectedId);
+    if (!row) return;
+
+    const scrollToRow = () => {
+      row.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    };
+
+    // Wait for the row to expand before scrolling.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(scrollToRow);
+    });
+  }, [selectedId]);
+
+  const selectFromMap = (id: string | null) => {
+    scrollListToSelection.current = id != null;
+    setSelectedId(id);
+  };
 
   return (
     <div className={`${styles.shell} ${styles.mapPageShell}`}>
@@ -58,7 +82,7 @@ export default function MapPageClient() {
           <CommunityMapLazy
             communities={usMappable}
             selectedId={selectedId}
-            onSelect={setSelectedId}
+            onSelect={selectFromMap}
             height="100%"
             showPreview={false}
             restrictToUS
@@ -81,6 +105,10 @@ export default function MapPageClient() {
                     item={item}
                     mapListRow
                     expanded={isSelected}
+                    listRowRef={(el) => {
+                      if (el) rowRefs.current.set(item.id, el);
+                      else rowRefs.current.delete(item.id);
+                    }}
                     onToggle={() =>
                       setSelectedId(isSelected ? null : item.id)
                     }

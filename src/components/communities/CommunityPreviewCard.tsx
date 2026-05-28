@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { Ref } from "react";
 import { formatLocation } from "@/lib/communities";
 import type { CommunityListItem } from "@/lib/types/community";
 import styles from "./communities.module.css";
@@ -17,6 +18,7 @@ type Props = {
   mapListRow?: boolean;
   expanded?: boolean;
   onToggle?: () => void;
+  listRowRef?: Ref<HTMLDivElement>;
 };
 
 export function CommunityPreviewCard({
@@ -27,10 +29,12 @@ export function CommunityPreviewCard({
   mapListRow,
   expanded,
   onToggle,
+  listRowRef,
 }: Props) {
   if (mapListRow) {
     return (
       <div
+        ref={listRowRef}
         className={`${styles.sidebarPreviewCard} ${styles.mapListRow}`}
         data-expanded={expanded ? "true" : "false"}
       >
