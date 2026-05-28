@@ -16,7 +16,6 @@ Determines the following about the user and what they want:
 ### Community Structure
 
 - communal vs private
-- hierarchical vs egalitarian
 - silent vs social
 - long-term residency vs retreat-based
 - lay-friendly vs monastic-oriented

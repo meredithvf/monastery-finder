@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "discover:communities": "node scripts/discover-communities.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.106.1",
