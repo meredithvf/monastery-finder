@@ -177,13 +177,12 @@
 }
 
 .searchRow {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 0.5rem;
+  position: relative;
 }
 
 .searchInput {
   width: 100%;
+  padding-right: 2.25rem;
 }
 
 .mapLayout {
@@ -309,6 +308,12 @@
 
 .previewCardClose + .previewCardHeader {
   padding-right: 1.5rem;
+}
+
+.previewCardClose.searchClear {
+  top: 50%;
+  right: 0.35rem;
+  transform: translateY(-50%);
 }
 
 .previewCardHeader {
