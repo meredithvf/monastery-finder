@@ -1,9 +1,17 @@
 # Purpose
 
-This is a website that helps people find monasteries, temples, convents, abbeys, retreats, etc. to visit/stay at.
+Next.js app to browse and match spiritual/intentional communities (monasteries, temples, zen centers, retreat centers, etc.) using Supabase data produced by the separate agent-system repo.
 
 # Rules
 
+- Follow `README.md` for architecture and setup; `docs/DATABASE.md` for Supabase/jsonb.
+- When changing types, queries, matching, APIs, scripts, or env vars listed in `.cursor/rules/readme-sync.mdc`, update the relevant doc in the same change.
+
 # References
+
+- `README.md` — app docs, setup, matching summary
+- `docs/DATABASE.md` — tables, jsonb schemas, queries
+- [Agent system](https://github.com/meredithvf/monastery-finder-agent-system) — enrichment pipeline, DDL
+- `src/lib/types/community.ts` — TypeScript mirrors of `profile` and `feature_scores` jsonb
 
 # Output

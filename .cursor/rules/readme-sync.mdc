@@ -1,0 +1,45 @@
+---
+description: Keep README.md and docs/DATABASE.md in sync when data model, APIs, or app structure change
+globs: src/lib/types/community.ts,src/lib/community-select.ts,src/lib/website-content.ts,src/lib/discovery-profile.ts,src/lib/matching/**,src/app/api/**,scripts/**,package.json,docs/DATABASE.md
+alwaysApply: false
+---
+
+# Documentation sync
+
+| File | Scope |
+|------|--------|
+| `README.md` | App overview, architecture, setup, routes, scripts, matching summary |
+| `docs/DATABASE.md` | Supabase tables, jsonb shapes, path mappings, query patterns, backend-only table reference |
+
+When you change code, update the relevant doc(s) in the **same change**. Do not leave docs stale.
+
+## Must update `docs/DATABASE.md` when you change
+
+| Area | Sections to check |
+|------|-------------------|
+| `src/lib/types/community.ts` | `profile` and `feature_scores` jsonb, TypeScript mirrors |
+| `src/lib/community-select.ts` | Query pattern, columns fetched |
+| `src/lib/website-content.ts` | Profile path → UI field tables |
+| `src/lib/feature-scores.ts` | Legacy migration behavior |
+
+## Must update `README.md` when you change
+
+| Area | Sections to check |
+|------|-------------------|
+| `src/lib/discovery-profile.ts` | Discovery chat, profile titles |
+| `src/lib/matching/feature-keys.ts`, `alignment.ts`, `weights.ts` | Matching summary |
+| `src/app/api/**` | API routes |
+| New/edited `src/app/**` routes | Features, project layout |
+| `package.json` scripts | Scripts table |
+| Env vars in code | Setup / `.env.local` |
+| `scripts/discover-communities.mjs` | Scripts table |
+
+Schema-only changes: update `docs/DATABASE.md` (and types); touch `README.md` only if the data-model summary table or doc links need updating.
+
+## Backend (agent system) changes
+
+Supabase/jsonb changes from [monastery-finder-agent-system](https://github.com/meredithvf/monastery-finder-agent-system) that this app reads: update `docs/DATABASE.md` and `src/lib/types/community.ts`. Document new tables in DATABASE.md when this app starts querying them.
+
+## Style
+
+Keep prose concise; prefer tables for schemas. App title: **Monastery** Finder.
