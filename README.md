@@ -44,7 +44,7 @@ flowchart TB
 ### Browse
 
 - **Home** (`/`) — Hero, discovery chat, profile summary, map preview
-- **Map** (`/map`) — Mapbox map with clustered markers (requires coordinates)
+- **Map** (`/map`) — Mapbox map with clustered markers, search, and filters (requires coordinates)
 - **List** (`/list`) — Filterable directory (tradition, cost, setting, beginner-friendly, search)
 - **Community detail** (`/community/[id]`) — Full profile, website section summaries, feature score breakdown, map
 

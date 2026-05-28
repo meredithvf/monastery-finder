@@ -83,13 +83,9 @@
   resize: vertical;
   min-height: 44px;
   max-height: 120px;
-  background: #fffefc;
-  border: 1px solid #c9d5c8;
   border-radius: 10px;
   padding: 0.65rem 0.75rem;
   font-size: 0.95rem;
-  color: #243228;
-  font-family: inherit;
   line-height: 1.45;
 }
 
@@ -200,8 +196,9 @@
   touch-action: none;
 }
 
+.spectrumSlider:focus,
 .spectrumSlider:focus-visible {
-  outline: 2px solid #7b8f82;
+  outline: 2px solid var(--accent, #7b8f82);
   outline-offset: 2px;
   border-radius: 6px;
 }

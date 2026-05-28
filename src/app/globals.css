@@ -7,6 +7,56 @@
   --panel: #fcfaf5;
   --accent: #7b8f82;
   --line: #d7ddd3;
+  --input-bg: #fffefc;
+  --input-border: #c9d5c8;
+  --focus-ring: var(--accent);
+}
+
+/* Shared text-like controls — green focus ring site-wide */
+:is(
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(
+      [type="hidden"]
+    ):not([type="file"]):not([type="button"]):not([type="submit"]):not(
+      [type="reset"]
+    ):not([type="image"]),
+  textarea,
+  select
+) {
+  font-family: inherit;
+  color: var(--ink, var(--foreground));
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    outline-color 0.15s ease;
+}
+
+:is(
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(
+      [type="hidden"]
+    ):not([type="file"]):not([type="button"]):not([type="submit"]):not(
+      [type="reset"]
+    ):not([type="image"]),
+  textarea,
+  select
+):focus {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-color: var(--focus-ring);
+  box-shadow: 0 0 0 1px rgba(123, 143, 130, 0.45);
+}
+
+input[type="checkbox"]:focus,
+input[type="radio"]:focus {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+input[type="range"]:focus {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: 6px;
 }
 
 html,

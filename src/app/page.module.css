@@ -151,13 +151,10 @@
 
 .field input,
 .field select {
-  background: #fffefc;
-  border: 1px solid #c9d5c8;
   border-radius: 10px;
   height: 44px;
   padding: 0 0.75rem;
   font-size: 0.95rem;
-  color: #243228;
 }
 
 .searchPanel button {

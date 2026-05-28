@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CommunityFiltersBar } from "@/components/communities/CommunityFilters";
+import { CommunitySearch } from "@/components/communities/CommunitySearch";
 import { CommunityMapLazy } from "@/components/communities/CommunityMapLazy";
 import { CommunityPreviewCard } from "@/components/communities/CommunityPreviewCard";
 import { SiteNav } from "@/components/communities/SiteNav";
@@ -28,6 +29,12 @@ export default function MapPageClient() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const rowRefs = useRef(new Map<string, HTMLDivElement>());
   const scrollListToSelection = useRef(false);
+
+  useEffect(() => {
+    if (selectedId && !usFiltered.some((c) => c.id === selectedId)) {
+      setSelectedId(null);
+    }
+  }, [selectedId, usFiltered]);
 
   useEffect(() => {
     if (!selectedId || !scrollListToSelection.current) return;
@@ -57,6 +64,11 @@ export default function MapPageClient() {
       <header className={styles.pageHeader}>
         <h1>Map</h1>
       </header>
+
+      <CommunitySearch
+        search={filters.search ?? ""}
+        onSearchChange={(v) => updateFilter("search", v)}
+      />
 
       <div className={styles.toolbar}>
         <CommunityFiltersBar
