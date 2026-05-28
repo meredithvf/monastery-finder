@@ -407,6 +407,12 @@
   height: 100%;
   max-height: 100%;
   overflow: hidden;
+  padding: 0;
+}
+
+.mapPageLayout .sidebar > .status,
+.mapPageLayout .sidebar > .cardMeta {
+  padding: 1rem;
 }
 
 .mapSidebarPreview {
@@ -421,48 +427,36 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  margin: 0 -1rem;
   overscroll-behavior: contain;
 }
 
 .mapListRow {
-  display: grid;
-  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  box-shadow: none;
 }
 
 .mapListRow:last-child {
   border-bottom: none;
 }
 
-.mapListButton {
+.mapListRowToggle {
   display: block;
   width: 100%;
-  padding: 0.85rem 1rem;
-  border: none;
-  border-radius: 0;
-  background: transparent;
-  color: var(--ink);
-  font-family: inherit;
-  font-size: 0.95rem;
-  font-weight: 500;
-  letter-spacing: normal;
-  text-transform: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
   text-align: left;
   cursor: pointer;
-  transition: background 0.12s ease;
+  font: inherit;
+  color: inherit;
 }
 
-.mapListButton:hover {
-  background: rgba(42, 52, 46, 0.04);
-}
-
-.mapListButtonSelected {
-  background: rgba(42, 52, 46, 0.06);
-  font-weight: 600;
-}
-
-.mapInlinePreview {
-  padding: 0 1rem 1rem;
+.mapListRow:not([data-expanded="true"]) .mapListRowMore {
+  display: none;
 }
 
 .status {

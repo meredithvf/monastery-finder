@@ -13,6 +13,10 @@ type Props = {
   compact?: boolean;
   /** Expanded card inside the map page sidebar list. */
   embedded?: boolean;
+  /** Expandable row in the map page sidebar — collapsed shows tradition + name. */
+  mapListRow?: boolean;
+  expanded?: boolean;
+  onToggle?: () => void;
 };
 
 export function CommunityPreviewCard({
@@ -20,7 +24,68 @@ export function CommunityPreviewCard({
   onClose,
   compact,
   embedded,
+  mapListRow,
+  expanded,
+  onToggle,
 }: Props) {
+  if (mapListRow) {
+    return (
+      <div
+        className={`${styles.sidebarPreviewCard} ${styles.mapListRow}`}
+        data-expanded={expanded ? "true" : "false"}
+      >
+        {expanded && onClose && (
+          <button
+            type="button"
+            className={styles.previewCardClose}
+            onClick={onClose}
+            aria-label="Collapse preview"
+          >
+            ×
+          </button>
+        )}
+        <button
+          type="button"
+          className={styles.mapListRowToggle}
+          onClick={onToggle}
+          aria-expanded={expanded}
+        >
+          <div className={styles.previewCardHeader}>
+            <div>
+              <p className={styles.cardMeta}>{item.tradition}</p>
+              <h3 className={styles.previewCardTitle}>{item.name}</h3>
+              <p className={`${styles.cardMeta} ${styles.mapListRowMore}`}>
+                {formatLocation({
+                  city: item.city,
+                  state: item.state,
+                  country: item.country,
+                })}
+              </p>
+            </div>
+          </div>
+        </button>
+        {item.shortDescription && (
+          <p className={`${styles.previewDescription} ${styles.mapListRowMore}`}>
+            {item.shortDescription}
+          </p>
+        )}
+        {item.tags.length > 0 && (
+          <div className={`${styles.cardTags} ${styles.mapListRowMore}`}>
+            {item.tags.slice(0, 4).map((tag) => (
+              <span key={tag}>{tag}</span>
+            ))}
+          </div>
+        )}
+        <Link
+          href={`/community/${item.id}`}
+          className={`${btnStyles.btn} ${styles.mapListRowMore}`}
+        >
+          View full profile
+        </Link>
+      </div>
+    );
+  }
+
   const rootClass = embedded
     ? styles.sidebarPreviewCard
     : compact

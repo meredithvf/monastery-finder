@@ -26,7 +26,6 @@ export default function MapPageClient() {
   const usFiltered = useMemo(() => filtered.filter(isUSCommunity), [filtered]);
   const usMappable = useMemo(() => mappable.filter(isUSCommunity), [mappable]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const selected = usFiltered.find((c) => c.id === selectedId) ?? null;
 
   return (
     <div className={`${styles.shell} ${styles.mapPageShell}`}>
@@ -77,27 +76,16 @@ export default function MapPageClient() {
               {usFiltered.map((item) => {
                 const isSelected = item.id === selectedId;
                 return (
-                  <div key={item.id} className={styles.mapListRow}>
-                    <button
-                      type="button"
-                      className={`${styles.mapListButton} ${
-                        isSelected ? styles.mapListButtonSelected : ""
-                      }`}
-                      onClick={() => setSelectedId(item.id)}
-                      aria-expanded={isSelected}
-                    >
-                      {item.name}
-                    </button>
-                    {isSelected && selected && (
-                      <div className={styles.mapInlinePreview}>
-                        <CommunityPreviewCard
-                          item={selected}
-                          embedded
-                          onClose={() => setSelectedId(null)}
-                        />
-                      </div>
-                    )}
-                  </div>
+                  <CommunityPreviewCard
+                    key={item.id}
+                    item={item}
+                    mapListRow
+                    expanded={isSelected}
+                    onToggle={() =>
+                      setSelectedId(isSelected ? null : item.id)
+                    }
+                    onClose={() => setSelectedId(null)}
+                  />
                 );
               })}
             </div>
