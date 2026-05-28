@@ -249,6 +249,101 @@
   gap: 0.25rem;
 }
 
+.preferencesBelowFold {
+  scroll-margin-top: 1rem;
+}
+
+.preferences {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.preferencesHeader {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.preferencesHint {
+  margin: 0;
+  color: #425247;
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.sliderGroup {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.fieldGroupTitle {
+  font-size: 0.82rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6a7d70;
+  margin: 0;
+  font-weight: 700;
+}
+
+.sliderDescription {
+  margin: 0;
+  font-size: 0.86rem;
+  color: #657268;
+  line-height: 1.5;
+}
+
+.seriousnessCurrent {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #425247;
+  line-height: 1.5;
+}
+
+.titleFieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.titleOptions {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.titleOption {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 0.55rem;
+  row-gap: 0.2rem;
+  align-items: start;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid #d5dfd4;
+  border-radius: 10px;
+  background: #fffefc;
+  cursor: pointer;
+}
+
+.titleOption:has(input:checked) {
+  border-color: #7b8f82;
+  background: #f4f8f4;
+}
+
+.titleOption input {
+  margin-top: 0.2rem;
+}
+
+.titleOptionLabel {
+  font-weight: 600;
+  color: #2f3d34;
+  font-size: 0.94rem;
+}
+
+.titleOption .sliderDescription {
+  grid-column: 2;
+}
+
 @media (max-width: 680px) {
   .composer {
     grid-template-columns: 1fr;

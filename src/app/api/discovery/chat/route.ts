@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import {
-  DISCOVERY_PROFILE_TOOL,
+  DISCOVERY_CHAT_TOOL,
   type ChatMessage,
-  type UserDiscoveryProfile,
+  type DiscoveryChatContext,
 } from "@/lib/discovery-profile";
-import { DISCOVERY_SYSTEM_PROMPT } from "@/lib/discovery-prompt";
+import {
+  DISCOVERY_MAX_USER_TURNS,
+  discoverySystemPromptForTurn,
+} from "@/lib/discovery-prompt";
 
 export async function POST(request: NextRequest) {
   if (!process.env.OPENAI_API_KEY) {
@@ -39,6 +42,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "No valid messages provided." }, { status: 400 });
   }
 
+  const userTurnCount = sanitized.filter((m) => m.role === "user").length;
+  if (userTurnCount > DISCOVERY_MAX_USER_TURNS) {
+    return NextResponse.json(
+      { error: `Discovery chat allows at most ${DISCOVERY_MAX_USER_TURNS} replies.` },
+      { status: 400 },
+    );
+  }
+
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   try {
@@ -46,11 +57,11 @@ export async function POST(request: NextRequest) {
       model: process.env.OPENAI_MODEL ?? "gpt-4o-mini",
       temperature: 0.7,
       messages: [
-        { role: "system", content: DISCOVERY_SYSTEM_PROMPT },
+        { role: "system", content: discoverySystemPromptForTurn(userTurnCount) },
         ...sanitized.map((m) => ({ role: m.role, content: m.content })),
       ],
-      tools: [DISCOVERY_PROFILE_TOOL],
-      tool_choice: "auto",
+      tools: [DISCOVERY_CHAT_TOOL],
+      tool_choice: userTurnCount >= DISCOVERY_MAX_USER_TURNS ? "required" : "auto",
     });
 
     const choice = completion.choices[0];
@@ -58,19 +69,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No response from the model." }, { status: 502 });
     }
 
-    let profile: UserDiscoveryProfile | null = null;
+    let chatContext: DiscoveryChatContext | null = null;
     const toolCalls = choice.message.tool_calls;
 
     if (toolCalls?.length) {
       for (const call of toolCalls) {
-        if (call.type !== "function" || call.function.name !== "submit_discovery_profile") {
+        if (call.type !== "function" || call.function.name !== "submit_discovery_context") {
           continue;
         }
         try {
-          profile = JSON.parse(call.function.arguments) as UserDiscoveryProfile;
+          chatContext = JSON.parse(call.function.arguments) as DiscoveryChatContext;
         } catch {
           return NextResponse.json(
-            { error: "Failed to parse discovery profile from the model." },
+            { error: "Failed to parse discovery context from the model." },
             { status: 502 },
           );
         }
@@ -79,11 +90,11 @@ export async function POST(request: NextRequest) {
 
     const reply =
       choice.message.content?.trim() ||
-      (profile
-        ? "Your discovery profile is ready. Here is what we learned about your path."
+      (chatContext
+        ? "Thank you for sharing so openly. Tune the sliders below, then we will shape your profile."
         : "Thank you for sharing. Tell me a bit more when you are ready.");
 
-    return NextResponse.json({ reply, profile });
+    return NextResponse.json({ reply, chatContext });
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Discovery chat request failed.";

@@ -9,13 +9,21 @@ import {
   type ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
+import { DiscoveryPreferences } from "@/components/DiscoveryPreferences";
 import { DiscoveryProfileView } from "@/components/DiscoveryProfileView";
 import styles from "./DiscoveryChat.module.css";
 import btnStyles from "@/styles/buttons.module.css";
 import type {
   ChatMessage,
+  DiscoveryChatContext,
   UserDiscoveryProfile,
 } from "@/lib/discovery-profile";
+import { buildDiscoveryProfile } from "@/lib/discovery-profile";
+import { DISCOVERY_MAX_USER_TURNS } from "@/lib/discovery-prompt";
+import {
+  DEFAULT_DISCOVERY_SLIDER_VALUES,
+  type DiscoverySliderValues,
+} from "@/lib/discovery-sliders";
 import {
   clearDiscoveryProfile,
   saveDiscoveryProfile,
@@ -24,7 +32,7 @@ import {
 const INITIAL_MESSAGE: ChatMessage = {
   role: "assistant",
   content:
-    "Welcome. I will ask a few questions about your spiritual interests, the kind of community you imagine, practical needs, and how seriously you are exploring — then I will shape a profile to guide your search. \n\n What draws you to monasteries or retreats right now?",
+    "Welcome. Share what draws you to monastic or retreat life — the more detail you offer, the fewer follow-up questions I will need.\n\nWhen I have enough to go on, you will tune preference sliders and we will build your profile.\n\nWhat draws you to monasteries or retreats right now?",
 };
 
 type DiscoveryContextValue = {
@@ -33,9 +41,14 @@ type DiscoveryContextValue = {
   setInput: (value: string) => void;
   loading: boolean;
   error: string | null;
+  userTurnCount: number;
+  chatContext: DiscoveryChatContext | null;
+  sliderValues: DiscoverySliderValues;
+  setSliderValues: (values: DiscoverySliderValues) => void;
   profile: UserDiscoveryProfile | null;
   setProfile: (profile: UserDiscoveryProfile | null) => void;
   sendMessage: () => Promise<void>;
+  confirmPreferences: () => void;
   startOver: () => void;
 };
 
@@ -56,11 +69,20 @@ export function DiscoveryProvider({ children }: { children: ReactNode }) {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [chatContext, setChatContext] = useState<DiscoveryChatContext | null>(
+    null,
+  );
+  const [sliderValues, setSliderValues] = useState<DiscoverySliderValues>(
+    DEFAULT_DISCOVERY_SLIDER_VALUES,
+  );
   const [profile, setProfile] = useState<UserDiscoveryProfile | null>(null);
+
+  const userTurnCount = messages.filter((m) => m.role === "user").length;
 
   async function sendMessage() {
     const text = input.trim();
-    if (!text || loading || profile) return;
+    if (!text || loading || profile || chatContext) return;
+    if (userTurnCount >= DISCOVERY_MAX_USER_TURNS) return;
 
     const userMessage: ChatMessage = { role: "user", content: text };
     const nextMessages = [...messages, userMessage];
@@ -85,8 +107,8 @@ export function DiscoveryProvider({ children }: { children: ReactNode }) {
         ...prev,
         { role: "assistant", content: data.reply },
       ]);
-      if (data.profile) {
-        setProfile(data.profile);
+      if (data.chatContext) {
+        setChatContext(data.chatContext);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to send message.");
@@ -95,8 +117,15 @@ export function DiscoveryProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  function confirmPreferences() {
+    if (!chatContext) return;
+    setProfile(buildDiscoveryProfile(chatContext, sliderValues));
+  }
+
   function startOver() {
     setMessages([INITIAL_MESSAGE]);
+    setChatContext(null);
+    setSliderValues(DEFAULT_DISCOVERY_SLIDER_VALUES);
     setProfile(null);
     setError(null);
     setInput("");
@@ -111,9 +140,14 @@ export function DiscoveryProvider({ children }: { children: ReactNode }) {
         setInput,
         loading,
         error,
+        userTurnCount,
+        chatContext,
+        sliderValues,
+        setSliderValues,
         profile,
         setProfile,
         sendMessage,
+        confirmPreferences,
         startOver,
       }}
     >
@@ -123,10 +157,21 @@ export function DiscoveryProvider({ children }: { children: ReactNode }) {
 }
 
 export function DiscoveryChatSection() {
-  const { messages, input, setInput, loading, error, profile, sendMessage } =
-    useDiscovery();
+  const {
+    messages,
+    input,
+    setInput,
+    loading,
+    error,
+    userTurnCount,
+    chatContext,
+    profile,
+    sendMessage,
+  } = useDiscovery();
   const messagesRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  const chatComplete = Boolean(chatContext || profile);
 
   useEffect(() => {
     const container = messagesRef.current;
@@ -135,10 +180,10 @@ export function DiscoveryChatSection() {
   }, [messages, loading]);
 
   useEffect(() => {
-    if (!loading && !profile) {
+    if (!loading && !chatComplete) {
       inputRef.current?.focus({ preventScroll: true });
     }
-  }, [loading, profile]);
+  }, [loading, chatComplete]);
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -152,7 +197,9 @@ export function DiscoveryChatSection() {
       <div className={styles.discoveryHeader}>
         <p className={styles.discoveryLabel}>What are you looking for?</p>
         <p className={styles.discoveryHint}>
-          A short conversation to find the right place for you.
+          {chatComplete
+            ? "Conversation complete — tune your sliders below."
+            : "A short conversation — finish when you have said enough, or after a few follow-ups at most."}
         </p>
       </div>
 
@@ -184,27 +231,74 @@ export function DiscoveryChatSection() {
 
         {error && <p className={styles.error}>{error}</p>}
 
-        {!profile && (
+        {!chatComplete && (
           <div className={styles.composer}>
             <textarea
               ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              rows={2}
-              disabled={loading}
+              rows={3}
+              disabled={loading || userTurnCount >= DISCOVERY_MAX_USER_TURNS}
+              placeholder="Share what matters to you — the more context, the better your matches."
               aria-label="Your message"
             />
             <button
               type="button"
               className={btnStyles.btn}
               onClick={() => void sendMessage()}
-              disabled={loading || !input.trim()}
+              disabled={
+                loading ||
+                !input.trim() ||
+                userTurnCount >= DISCOVERY_MAX_USER_TURNS
+              }
             >
               Send
             </button>
           </div>
         )}
+      </div>
+    </section>
+  );
+}
+
+export function DiscoveryPreferencesSection() {
+  const {
+    chatContext,
+    profile,
+    sliderValues,
+    setSliderValues,
+    confirmPreferences,
+  } = useDiscovery();
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!chatContext || profile) return;
+    sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [chatContext, profile]);
+
+  if (!chatContext || profile) return null;
+
+  return (
+    <section
+      ref={sectionRef}
+      className={styles.preferencesBelowFold}
+      aria-label="Preference sliders"
+    >
+      <div className={styles.profilePanel}>
+        <DiscoveryPreferences
+          values={sliderValues}
+          onChange={setSliderValues}
+        />
+        <div className={styles.profileActions}>
+          <button
+            type="button"
+            className={btnStyles.btn}
+            onClick={confirmPreferences}
+          >
+            Build my profile
+          </button>
+        </div>
       </div>
     </section>
   );

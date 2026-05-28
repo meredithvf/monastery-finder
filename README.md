@@ -50,7 +50,7 @@ flowchart TB
 
 ### Discovery chat and matching
 
-1. **Chat** (`POST /api/discovery/chat`) — OpenAI guides the user through spiritual orientation, community structure, lifestyle, practical constraints, and readiness. When complete, the model calls `submit_discovery_profile` and returns a structured `UserDiscoveryProfile` (see `src/lib/discovery-profile.ts`).
+1. **Chat** (`POST /api/discovery/chat`) — A short open-ended conversation (one to four replies, ending early when the model has enough detail). Returns qualitative context via `submit_discovery_context` (summary, practical constraints, readiness narrative). The user then sets spectrum sliders and profile title on the home page (`DiscoveryPreferences`, `src/lib/discovery-sliders.ts`); the client merges into `UserDiscoveryProfile` (see `src/lib/discovery-profile.ts`).
 2. **Match** (`POST /api/discovery/match`) — Loads all communities with `community_scores.feature_scores`, normalizes user preferences (0–100 spectrums) and community features (0–1), applies hard constraints (region, tradition, budget flags where set), scores weighted alignment, returns top N with explanations (`src/agents/matching/`).
 3. **Results** (`/discovery/results`) — Displays ranked matches from session storage.
 

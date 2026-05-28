@@ -1,5 +1,6 @@
 import {
   DiscoveryChatSection,
+  DiscoveryPreferencesSection,
   DiscoveryProfileSection,
   DiscoveryProvider,
 } from "@/components/DiscoveryChat";
@@ -33,6 +34,7 @@ export default function Home() {
 
         <section className={styles.discoveryBelowFold} aria-label="Discovery">
           <DiscoveryChatSection />
+          <DiscoveryPreferencesSection />
           <DiscoveryProfileSection />
         </section>
 
