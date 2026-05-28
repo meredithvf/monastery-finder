@@ -4,6 +4,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   applyCommunityFilters,
   fetchCommunities,
+  getUniqueCommunityTypes,
+  getUniqueStates,
   getUniqueTraditions,
   sortCommunities,
 } from "@/lib/communities";
@@ -53,6 +55,11 @@ export function useCommunities(options: UseCommunitiesOptions = {}) {
   }, [load]);
 
   const traditions = useMemo(() => getUniqueTraditions(items), [items]);
+  const communityTypes = useMemo(
+    () => getUniqueCommunityTypes(items),
+    [items],
+  );
+  const states = useMemo(() => getUniqueStates(items), [items]);
 
   const filtered = useMemo(() => {
     const next = filters ? applyCommunityFilters(items, filters) : items;
@@ -74,6 +81,8 @@ export function useCommunities(options: UseCommunitiesOptions = {}) {
     filtered,
     mappable,
     traditions,
+    communityTypes,
+    states,
     loading,
     error,
     reload: load,

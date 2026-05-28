@@ -50,10 +50,15 @@ export function toListItem(row: CommunityWithRelations): CommunityListItem {
 
   const profileCoords = profile?.geographic?.coordinates;
 
+  const types = profile?.coreIdentity?.types?.length
+    ? profile.coreIdentity.types
+    : row.types;
+
   return {
     id: row.id,
     name: row.name,
     tradition: row.tradition,
+    types: types?.length ? types : [],
     website: row.website,
     city: row.city,
     state: row.state,

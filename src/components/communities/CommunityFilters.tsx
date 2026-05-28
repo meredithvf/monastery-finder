@@ -1,5 +1,6 @@
 "use client";
 
+import { formatCommunityType } from "@/lib/community-labels";
 import type { CommunityFilters as Filters } from "@/lib/types/community";
 import styles from "./communities.module.css";
 import btnStyles from "@/styles/buttons.module.css";
@@ -7,6 +8,8 @@ import btnStyles from "@/styles/buttons.module.css";
 type Props = {
   filters: Filters;
   traditions: string[];
+  communityTypes: string[];
+  states: string[];
   onChange: <K extends keyof Filters>(key: K, value: Filters[K]) => void;
   onReset?: () => void;
 };
@@ -14,6 +17,8 @@ type Props = {
 export function CommunityFiltersBar({
   filters,
   traditions,
+  communityTypes,
+  states,
   onChange,
   onReset,
 }: Props) {
@@ -46,6 +51,36 @@ export function CommunityFiltersBar({
           {traditions.map((t) => (
             <option key={t} value={t}>
               {t}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label className={styles.field}>
+        Type
+        <select
+          value={filters.type ?? ""}
+          onChange={(e) => onChange("type", e.target.value || undefined)}
+        >
+          <option value="">All types</option>
+          {communityTypes.map((type) => (
+            <option key={type} value={type}>
+              {formatCommunityType(type)}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label className={styles.field}>
+        State
+        <select
+          value={filters.state ?? ""}
+          onChange={(e) => onChange("state", e.target.value || undefined)}
+        >
+          <option value="">All states</option>
+          {states.map((state) => (
+            <option key={state} value={state}>
+              {state}
             </option>
           ))}
         </select>

@@ -13,7 +13,15 @@ import { isUSCommunity } from "@/lib/usMap";
 
 export default function MapPageClient() {
   const { filters, updateFilter, resetFilters } = useCommunityFilters();
-  const { filtered, mappable, traditions, loading, error } = useCommunities({
+  const {
+    filtered,
+    mappable,
+    traditions,
+    communityTypes,
+    states,
+    loading,
+    error,
+  } = useCommunities({
     filters,
   });
   const usFiltered = useMemo(() => filtered.filter(isUSCommunity), [filtered]);
@@ -26,16 +34,14 @@ export default function MapPageClient() {
       <SiteNav />
       <header className={styles.pageHeader}>
         <h1>Map</h1>
-        <p>
-          Browse communities in the list or on the map — select one to expand a
-          profile preview.
-        </p>
       </header>
 
       <div className={styles.toolbar}>
         <CommunityFiltersBar
           filters={filters}
           traditions={traditions}
+          communityTypes={communityTypes}
+          states={states}
           onChange={updateFilter}
           onReset={resetFilters}
         />

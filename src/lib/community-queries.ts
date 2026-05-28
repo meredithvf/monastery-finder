@@ -95,3 +95,18 @@ export async function fetchCommunityById(
 export function getUniqueTraditions(items: CommunityListItem[]): string[] {
   return [...new Set(items.map((i) => i.tradition).filter(Boolean))].sort();
 }
+
+export function getUniqueCommunityTypes(
+  items: CommunityListItem[],
+): string[] {
+  const types = items.flatMap((i) => i.types).filter(Boolean);
+  return [...new Set(types)].sort((a, b) =>
+    a.localeCompare(b, undefined, { sensitivity: "base" }),
+  );
+}
+
+export function getUniqueStates(items: CommunityListItem[]): string[] {
+  return [...new Set(items.map((i) => i.state).filter(Boolean))].sort(
+    (a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }),
+  );
+}

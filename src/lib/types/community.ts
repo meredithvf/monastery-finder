@@ -293,6 +293,7 @@ export type CommunityListItem = {
   id: string;
   name: string;
   tradition: string;
+  types: (CommunityType | string)[];
   website: string;
   city: string;
   state: string;
@@ -314,6 +315,8 @@ export type CommunityListItem = {
 
 export type CommunityFilters = {
   tradition?: string;
+  type?: string;
+  state?: string;
   beginnerFriendly?: "yes" | "no" | "mixed" | "any";
   costRange?: "free" | "low" | "mid" | "high" | "any";
   setting?: "rural" | "urban" | "suburban" | "any";

@@ -5,6 +5,8 @@ import type { CommunityFilters, CommunitySort } from "@/lib/types/community";
 
 const DEFAULT_FILTERS: CommunityFilters = {
   tradition: undefined,
+  type: undefined,
+  state: undefined,
   beginnerFriendly: "any",
   costRange: "any",
   setting: "any",
@@ -33,6 +35,8 @@ export function useCommunityFilters(initial?: Partial<CommunityFilters>) {
   const hasActiveFilters = useMemo(() => {
     return (
       Boolean(filters.tradition) ||
+      Boolean(filters.type) ||
+      Boolean(filters.state) ||
       (filters.beginnerFriendly && filters.beginnerFriendly !== "any") ||
       (filters.costRange && filters.costRange !== "any") ||
       (filters.setting && filters.setting !== "any") ||

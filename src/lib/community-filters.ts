@@ -77,12 +77,24 @@ function matchesTags(
   return tags.every((tag) => itemTags.includes(tag.toLowerCase()));
 }
 
+function matchesType(item: CommunityListItem, type?: string): boolean {
+  if (!type) return true;
+  return item.types.some((t) => t === type);
+}
+
+function matchesState(item: CommunityListItem, state?: string): boolean {
+  if (!state) return true;
+  return item.state.trim().toLowerCase() === state.trim().toLowerCase();
+}
+
 export function applyCommunityFilters(
   items: CommunityListItem[],
   filters: CommunityFilters,
 ): CommunityListItem[] {
   return items.filter((item) => {
     if (filters.tradition && item.tradition !== filters.tradition) return false;
+    if (!matchesType(item, filters.type)) return false;
+    if (!matchesState(item, filters.state)) return false;
     if (!matchesBeginnerFilter(item, filters.beginnerFriendly)) return false;
     if (!matchesCostRange(item, filters.costRange)) return false;
     if (!matchesSetting(item, filters.setting)) return false;

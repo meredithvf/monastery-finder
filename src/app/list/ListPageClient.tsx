@@ -13,7 +13,14 @@ export default function ListPageClient() {
   const { filters, updateFilter, resetFilters, sort, setSort } =
     useCommunityFilters();
   const { coords, enabled, request, error: geoError } = useGeolocation();
-  const { filtered, traditions, loading, error } = useCommunities({
+  const {
+    filtered,
+    traditions,
+    communityTypes,
+    states,
+    loading,
+    error,
+  } = useCommunities({
     filters,
     sort: enabled && sort === "distance" ? "distance" : sort,
     userCoords: coords,
@@ -44,6 +51,8 @@ export default function ListPageClient() {
         <CommunityFiltersBar
           filters={filters}
           traditions={traditions}
+          communityTypes={communityTypes}
+          states={states}
           onChange={updateFilter}
           onReset={resetFilters}
         />

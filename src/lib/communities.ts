@@ -10,6 +10,8 @@ export {
   fetchCommunitiesForDiscoveryMatch,
   fetchCommunityById,
   fetchCommunityMatchCandidates,
+  getUniqueCommunityTypes,
+  getUniqueStates,
   getUniqueTraditions,
 } from "@/lib/community-queries";
 export { sortCommunities } from "@/lib/community-sort";
