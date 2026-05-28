@@ -24,6 +24,15 @@ export function HomeMapSection() {
         <h2>Explore Communities</h2>
       </div>
 
+      <div className={styles.homeMapActions}>
+        <Link href="/map" className={btnStyles.btn}>
+          Open full map
+        </Link>
+        <Link href="/list" className={btnStyles.btnGhost}>
+          Browse list
+        </Link>
+      </div>
+
       <div className={styles.homeMapFrame}>
         {loading && <p className={styles.status}>Loading communities…</p>}
         {error && <p className={styles.error}>{error}</p>}
@@ -52,15 +61,6 @@ export function HomeMapSection() {
             )}
           </>
         )}
-      </div>
-
-      <div className={styles.homeMapActions}>
-        <Link href="/map" className={btnStyles.btn}>
-          Open full map
-        </Link>
-        <Link href="/list" className={btnStyles.btnGhost}>
-          Browse list
-        </Link>
       </div>
     </section>
   );
