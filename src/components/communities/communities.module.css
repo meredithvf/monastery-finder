@@ -784,7 +784,8 @@
 
 .homeMapFrame {
   position: relative;
-  height: 360px;
+  --home-map-height: 520px;
+  height: var(--home-map-height);
   border: 1px solid var(--line);
   border-radius: 16px;
   overflow: hidden;
@@ -801,15 +802,17 @@
   position: absolute;
   top: 0;
   right: 0;
-  bottom: 0;
   z-index: 6;
   width: min(360px, 42%);
   min-width: 280px;
+  max-height: 100%;
   padding: 1rem;
   overflow-y: auto;
-  border-left: 1px solid var(--line);
-  background: var(--panel);
-  box-shadow: -6px 0 20px rgba(42, 52, 46, 0.1);
+  pointer-events: none;
+}
+
+.homeMapPreviewAside > * {
+  pointer-events: auto;
 }
 
 .homeMapActions {
@@ -849,22 +852,8 @@
     min-height: 0;
   }
 
-  .homeMapPreviewAside {
-    position: static;
-    width: 100%;
-    min-width: 0;
-    max-height: none;
-    box-shadow: none;
-    border-left: 0;
-    border-top: 1px solid var(--line);
-  }
-
-  .homeMapFrame:has(.homeMapPreviewAside) {
-    height: auto;
-  }
-
-  .homeMapFrame:has(.homeMapPreviewAside) .mapPane {
-    height: 360px;
+  .homeMapFrame {
+    --home-map-height: 440px;
   }
 }
 
