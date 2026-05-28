@@ -7,7 +7,6 @@ import styles from "./communities.module.css";
 const links = [
   { href: "/", label: "Home" },
   { href: "/map", label: "Map" },
-  { href: "/list", label: "List" },
 ];
 
 export function SiteNav() {

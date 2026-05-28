@@ -18,7 +18,6 @@ export default function Home() {
             <p className={styles.brand}>Monastery Finder</p>
             <div className={styles.navLinks}>
               <a href="/map">Map</a>
-              <a href="/list">List</a>
             </div>
           </nav>
 

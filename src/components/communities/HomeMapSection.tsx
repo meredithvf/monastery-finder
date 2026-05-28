@@ -28,9 +28,6 @@ export function HomeMapSection() {
         <Link href="/map" className={btnStyles.btn}>
           Open full map
         </Link>
-        <Link href="/list" className={btnStyles.btnGhost}>
-          Browse list
-        </Link>
       </div>
 
       <div className={styles.homeMapFrame}>

@@ -483,8 +483,8 @@ export default async function CommunityDetailPage({ params }: Props) {
           </section>
         )}
 
-        <Link href="/list" className={btnStyles.btnGhost}>
-          ← Back to list
+        <Link href="/map" className={btnStyles.btnGhost}>
+          ← Back to map
         </Link>
       </article>
     </div>

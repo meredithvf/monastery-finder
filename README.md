@@ -1,6 +1,6 @@
 # Monastery Finder
 
-A Next.js web app for discovering and comparing spiritual and intentional communities across the United States—monasteries, temples, zen centers, retreat centers, abbeys, convents, and similar places. Users explore communities on a map and list, read enriched profiles sourced from community websites, and get personalized matches through a guided discovery chat.
+A Next.js web app for discovering and comparing spiritual and intentional communities across the United States—monasteries, temples, zen centers, retreat centers, abbeys, convents, and similar places. Users explore communities on a map, read enriched profiles sourced from community websites, and get personalized matches through a guided discovery chat.
 
 **Data pipeline:** Community records are produced by the [Monastery Finder Agent System](https://github.com/meredithvf/monastery-finder-agent-system#monastery-finder-agent-system) (discovery + enrichment LangGraph pipelines) and stored in Supabase. This repo is the **frontend and matching layer** only—it reads `communities`, `community_profiles`, and `community_scores` and does not run the enrichment graph.
 
@@ -45,7 +45,6 @@ flowchart TB
 
 - **Home** (`/`) — Hero, discovery chat, profile summary, map preview
 - **Map** (`/map`) — Mapbox map with clustered markers, search, and filters (requires coordinates)
-- **List** (`/list`) — Filterable directory (tradition, cost, setting, beginner-friendly, search)
 - **Community detail** (`/community/[id]`) — Full profile, website section summaries, feature score breakdown, map
 
 ### Discovery chat and matching
@@ -75,7 +74,6 @@ src/
   app/
     page.tsx                    # Home + discovery chat
     map/                        # Full map view
-    list/                       # Directory + filters
     community/[id]/             # Detail page
     discovery/results/          # Match results
     api/discovery/
