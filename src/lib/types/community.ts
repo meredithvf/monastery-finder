@@ -303,7 +303,10 @@ export type CommunityListItem = {
   shortDescription: string;
   tags: string[];
   ruralUrban: RuralUrban;
+  silenceLevel: Level;
   beginnerFriendly: TriState;
+  silenceLevelScore: number | null;
+  unpluggedScore: number | null;
   costMin: number | null;
   costMax: number | null;
   adjustedOverall: number | null;
@@ -322,6 +325,8 @@ export type CommunityFilters = {
   setting?: "rural" | "urban" | "suburban" | "any";
   search?: string;
   tags?: string[];
+  silent?: boolean;
+  unplugged?: boolean;
 };
 
 export type CommunitySort = "score" | "distance" | "beginner_friendly";

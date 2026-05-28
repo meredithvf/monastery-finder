@@ -22,11 +22,43 @@ export function CommunityFiltersBar({
   onChange,
   onReset,
 }: Props) {
-  const pillFilters = [
+  const tagPills = [
     { tag: "retreat", label: "Retreats" },
     { tag: "residential", label: "Residential stays" },
     { tag: "volunteer", label: "Volunteer / work exchange" },
   ] as const;
+
+  const featurePills = [
+    {
+      key: "silent" as const,
+      label: "Silent",
+      active: Boolean(filters.silent),
+      toggle: () => onChange("silent", !filters.silent),
+    },
+    {
+      key: "unplugged" as const,
+      label: "Unplugged",
+      active: Boolean(filters.unplugged),
+      toggle: () => onChange("unplugged", !filters.unplugged),
+    },
+    {
+      key: "free" as const,
+      label: "Free",
+      active: filters.costRange === "free",
+      toggle: () =>
+        onChange("costRange", filters.costRange === "free" ? "any" : "free"),
+    },
+    {
+      key: "beginnerFriendly" as const,
+      label: "Beginner friendly",
+      active: filters.beginnerFriendly === "yes",
+      toggle: () =>
+        onChange(
+          "beginnerFriendly",
+          filters.beginnerFriendly === "yes" ? "any" : "yes",
+        ),
+    },
+  ];
 
   const tags = filters.tags ?? [];
 
@@ -36,6 +68,23 @@ export function CommunityFiltersBar({
       : [...tags, tag];
     onChange("tags", next as Filters["tags"]);
   };
+
+  const renderPill = (
+    key: string,
+    label: string,
+    active: boolean,
+    onClick: () => void,
+  ) => (
+    <button
+      key={key}
+      type="button"
+      className={`${styles.filterPill} ${active ? styles.filterPillActive : ""}`}
+      onClick={onClick}
+      aria-pressed={active}
+    >
+      {label}
+    </button>
+  );
 
   return (
     <div className={styles.filters}>
@@ -86,23 +135,15 @@ export function CommunityFiltersBar({
         </select>
       </label>
 
-      <div className={styles.pillRow} aria-label="Additional filters">
-        {pillFilters.map((pill) => {
-          const active = tags.includes(pill.tag);
-          return (
-            <button
-              key={pill.tag}
-              type="button"
-              className={`${styles.filterPill} ${
-                active ? styles.filterPillActive : ""
-              }`}
-              onClick={() => toggleTag(pill.tag)}
-              aria-pressed={active}
-            >
-              {pill.label}
-            </button>
-          );
-        })}
+      <div className={styles.pillRow} aria-label="Filter chips">
+        {tagPills.map((pill) =>
+          renderPill(pill.tag, pill.label, tags.includes(pill.tag), () =>
+            toggleTag(pill.tag),
+          ),
+        )}
+        {featurePills.map((pill) =>
+          renderPill(pill.key, pill.label, pill.active, pill.toggle),
+        )}
       </div>
 
       {onReset && (

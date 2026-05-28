@@ -3,6 +3,8 @@ import type {
   CommunityListItem,
 } from "@/lib/types/community";
 
+const FEATURE_SCORE_THRESHOLD = 0.65;
+
 function matchesCostRange(
   item: CommunityListItem,
   range: CommunityFilters["costRange"],
@@ -87,6 +89,30 @@ function matchesState(item: CommunityListItem, state?: string): boolean {
   return item.state.trim().toLowerCase() === state.trim().toLowerCase();
 }
 
+function itemHasTag(item: CommunityListItem, needle: string): boolean {
+  const q = needle.toLowerCase();
+  return item.tags.some((tag) => tag.toLowerCase().includes(q));
+}
+
+function matchesSilent(
+  item: CommunityListItem,
+  enabled: CommunityFilters["silent"],
+): boolean {
+  if (!enabled) return true;
+  if ((item.silenceLevelScore ?? 0) >= FEATURE_SCORE_THRESHOLD) return true;
+  if (item.silenceLevel === "high") return true;
+  return itemHasTag(item, "silent");
+}
+
+function matchesUnplugged(
+  item: CommunityListItem,
+  enabled: CommunityFilters["unplugged"],
+): boolean {
+  if (!enabled) return true;
+  if ((item.unpluggedScore ?? 0) >= FEATURE_SCORE_THRESHOLD) return true;
+  return itemHasTag(item, "unplugged");
+}
+
 export function applyCommunityFilters(
   items: CommunityListItem[],
   filters: CommunityFilters,
@@ -100,6 +126,8 @@ export function applyCommunityFilters(
     if (!matchesSetting(item, filters.setting)) return false;
     if (!matchesSearch(item, filters.search)) return false;
     if (!matchesTags(item, filters.tags)) return false;
+    if (!matchesSilent(item, filters.silent)) return false;
+    if (!matchesUnplugged(item, filters.unplugged)) return false;
     return true;
   });
 }

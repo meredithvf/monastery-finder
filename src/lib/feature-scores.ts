@@ -190,6 +190,20 @@ export function getBeginnerFriendlyScore(
   return scores?.features.accessibility.beginner_friendly ?? null;
 }
 
+/** Higher values indicate more silence. */
+export function getSilenceLevelScore(
+  scores: CommunityFeatureScores | null,
+): number | null {
+  return scores?.features.practice.silence_level ?? null;
+}
+
+/** Higher values indicate more unplugged / less digital-friendly. */
+export function getUnpluggedScore(
+  scores: CommunityFeatureScores | null,
+): number | null {
+  return scores?.features.lifestyle.digital_friendly_vs_unplugged ?? null;
+}
+
 /** 0 = expensive, 1 = affordable (inverse of `features.budget.budget`). */
 export function getCostAffordability(
   scores: CommunityFeatureScores | null,
