@@ -28,6 +28,29 @@ type Props = {
 
 const DEFAULT_SELECTED_ZOOM = 10;
 
+function initialViewState(
+  communities: CommunityListItem[],
+  initialZoom?: number,
+) {
+  const located = communities.filter(
+    (c): c is CommunityListItem & { latitude: number; longitude: number } =>
+      c.latitude != null && c.longitude != null,
+  );
+  if (located.length === 1) {
+    const zoom = initialZoom ?? 9;
+    return {
+      longitude: located[0].longitude,
+      latitude: located[0].latitude,
+      zoom,
+    };
+  }
+  return {
+    longitude: US_MAP_CENTER.longitude,
+    latitude: US_MAP_CENTER.latitude,
+    zoom: initialZoom ?? US_MAP_CENTER.zoom,
+  };
+}
+
 type ClusterFeature = Supercluster.PointFeature<{
   cluster: boolean;
   communityId: string;
@@ -46,11 +69,9 @@ export function CommunityMap({
   selectedZoom = DEFAULT_SELECTED_ZOOM,
 }: Props) {
   const mapRef = useRef<MapRef>(null);
-  const [viewState, setViewState] = useState({
-    longitude: US_MAP_CENTER.longitude,
-    latitude: US_MAP_CENTER.latitude,
-    zoom: initialZoom ?? US_MAP_CENTER.zoom,
-  });
+  const [viewState, setViewState] = useState(() =>
+    initialViewState(communities, initialZoom),
+  );
   const [bounds, setBounds] = useState<[number, number, number, number] | null>(
     null,
   );
@@ -109,9 +130,10 @@ export function CommunityMap({
   }, [points]);
 
   const clusters = useMemo(() => {
-    if (!bounds) return points;
+    // Single-location maps (e.g. community profile) must always show the pin.
+    if (!bounds || mappable.length <= 1) return points;
     return index.getClusters(bounds, Math.floor(zoom)) as ClusterFeature[];
-  }, [bounds, zoom, index, points]);
+  }, [bounds, zoom, index, points, mappable.length]);
 
   const selected = useMemo(
     () => communities.find((c) => c.id === selectedId) ?? null,

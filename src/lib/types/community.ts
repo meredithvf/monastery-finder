@@ -254,6 +254,8 @@ export type CommunityRow = {
   id: string;
   name: string;
   website: string;
+  phone: string | null;
+  email: string | null;
   tradition: string;
   types: CommunityType[] | string[];
   city: string;

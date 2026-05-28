@@ -255,6 +255,16 @@ export default async function CommunityDetailPage({ params }: Props) {
               {community.website}
             </a>
           )}
+          {community.email && !isUnknownSentinel(community.email) && (
+            <a href={`mailto:${community.email.trim()}`}>
+              {community.email.trim()}
+            </a>
+          )}
+          {community.phone && !isUnknownSentinel(community.phone) && (
+            <a href={`tel:${community.phone.replace(/\s/g, "")}`}>
+              {community.phone.trim()}
+            </a>
+          )}
         </div>
 
         {showWebsiteSections && (

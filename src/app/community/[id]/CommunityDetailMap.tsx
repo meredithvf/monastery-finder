@@ -26,6 +26,7 @@ export function CommunityDetailMap({ item }: { item: CommunityListItem }) {
         height={220}
         showPreview={false}
         initialZoom={9}
+        fitAllOnLoad={false}
       />
     </div>
   );

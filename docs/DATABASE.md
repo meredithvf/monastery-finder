@@ -14,6 +14,8 @@ erDiagram
     text id PK
     text name
     text website
+    text phone
+    text email
     text tradition
     text[] types
     text city
@@ -54,6 +56,8 @@ Relational columns for listing, maps, and filters. Enrichment copies values from
 | `id` | `text` | Primary key (slug-style id from enrichment) |
 | `name` | `text` | Display name |
 | `website` | `text` | Canonical URL |
+| `phone` | `text` | Contact phone (nullable) |
+| `email` | `text` | Contact email (nullable) |
 | `tradition` | `text` | e.g. Zen, Benedictine |
 | `types` | `text[]` | `monastery`, `zen_center`, `temple`, `convent`, `abbey`, `retreat_center`, `intentional_community`, `other` |
 | `city`, `state`, `country` | `text` | US-focused; country often `US` |
