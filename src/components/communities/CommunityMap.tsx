@@ -142,6 +142,23 @@ export function CommunityMap({
     });
   }, [selected, selectedZoom]);
 
+  const zoomToCluster = useCallback(
+    (clusterId: number, lng: number, lat: number) => {
+      const expansionZoom = index.getClusterExpansionZoom(clusterId);
+      const targetZoom = Math.min(
+        16,
+        Math.max(expansionZoom, Math.floor(zoom) + 1),
+      );
+      mapRef.current?.flyTo({
+        center: [lng, lat],
+        zoom: targetZoom,
+        duration: 500,
+        essential: true,
+      });
+    },
+    [index, zoom],
+  );
+
   useEffect(() => {
     if (!fitAllOnLoad || restrictToUS) return;
     if (communities.length === 0) return;
@@ -205,6 +222,7 @@ export function CommunityMap({
           const [lng, lat] = feature.geometry.coordinates;
           const props = feature.properties as {
             cluster?: boolean;
+            cluster_id?: number;
             point_count?: number;
             communityId?: string;
             name?: string;
@@ -213,27 +231,22 @@ export function CommunityMap({
           const count = isCluster ? (props.point_count ?? 1) : 1;
 
           if (isCluster) {
+            const clusterId = props.cluster_id ?? Number(feature.id);
             return (
               <Marker
                 key={`cluster-${feature.id}`}
                 longitude={lng}
                 latitude={lat}
                 anchor="center"
-                onClick={(e) => {
-                  e.originalEvent.stopPropagation();
-                  const expansionZoom = Math.min(
-                    index.getClusterExpansionZoom(Number(feature.id)),
-                    16,
-                  );
-                  setViewState((prev) => ({
-                    ...prev,
-                    longitude: lng,
-                    latitude: lat,
-                    zoom: expansionZoom,
-                  }));
-                }}
               >
-                <div
+                <button
+                  type="button"
+                  aria-label={`${count} communities — zoom in`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    zoomToCluster(clusterId, lng, lat);
+                  }}
                   style={{
                     width: 36 + Math.min(count, 20),
                     height: 36 + Math.min(count, 20),
@@ -247,10 +260,11 @@ export function CommunityMap({
                     border: "2px solid #fcfaf5",
                     boxShadow: "0 4px 12px rgba(42,52,46,0.2)",
                     cursor: "pointer",
+                    padding: 0,
                   }}
                 >
                   {count}
-                </div>
+                </button>
               </Marker>
             );
           }
