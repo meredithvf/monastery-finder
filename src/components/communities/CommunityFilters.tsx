@@ -135,22 +135,28 @@ export function CommunityFiltersBar({
         </select>
       </label>
 
-      <div className={styles.pillRow} aria-label="Filter chips">
-        {tagPills.map((pill) =>
-          renderPill(pill.tag, pill.label, tags.includes(pill.tag), () =>
-            toggleTag(pill.tag),
-          ),
-        )}
-        {featurePills.map((pill) =>
-          renderPill(pill.key, pill.label, pill.active, pill.toggle),
+      <div className={styles.filterChipSection}>
+        <div className={styles.pillRow} aria-label="Filter chips">
+          {tagPills.map((pill) =>
+            renderPill(pill.tag, pill.label, tags.includes(pill.tag), () =>
+              toggleTag(pill.tag),
+            ),
+          )}
+          {featurePills.map((pill) =>
+            renderPill(pill.key, pill.label, pill.active, pill.toggle),
+          )}
+        </div>
+
+        {onReset && (
+          <button
+            type="button"
+            className={btnStyles.btnTertiary}
+            onClick={onReset}
+          >
+            Reset filters
+          </button>
         )}
       </div>
-
-      {onReset && (
-        <button type="button" className={btnStyles.btnGhost} onClick={onReset}>
-          Reset
-        </button>
-      )}
     </div>
   );
 }
