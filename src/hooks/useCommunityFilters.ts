@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import type { CommunityFilters, CommunitySort } from "@/lib/types/community";
+import type { CommunityFilters } from "@/lib/types/community";
 
 const DEFAULT_FILTERS: CommunityFilters = {
   tradition: undefined,
@@ -21,8 +21,6 @@ export function useCommunityFilters(initial?: Partial<CommunityFilters>) {
     ...DEFAULT_FILTERS,
     ...initial,
   });
-  const [sort, setSort] = useState<CommunitySort>("score");
-
   const updateFilter = useCallback(
     <K extends keyof CommunityFilters>(key: K, value: CommunityFilters[K]) => {
       setFilters((prev) => ({ ...prev, [key]: value }));
@@ -55,7 +53,5 @@ export function useCommunityFilters(initial?: Partial<CommunityFilters>) {
     updateFilter,
     resetFilters,
     hasActiveFilters,
-    sort,
-    setSort,
   };
 }

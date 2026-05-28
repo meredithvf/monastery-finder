@@ -2,17 +2,14 @@
 
 import { CommunityCard } from "@/components/communities/CommunityCard";
 import { CommunityFiltersBar } from "@/components/communities/CommunityFilters";
-import { SearchAndSort } from "@/components/communities/SearchAndSort";
+import { CommunitySearch } from "@/components/communities/CommunitySearch";
 import { SiteNav } from "@/components/communities/SiteNav";
 import styles from "@/components/communities/communities.module.css";
 import { useCommunities } from "@/hooks/useCommunities";
-import { useGeolocation } from "@/hooks/useGeolocation";
 import { useCommunityFilters } from "@/hooks/useCommunityFilters";
 
 export default function ListPageClient() {
-  const { filters, updateFilter, resetFilters, sort, setSort } =
-    useCommunityFilters();
-  const { coords, enabled, request, error: geoError } = useGeolocation();
+  const { filters, updateFilter, resetFilters } = useCommunityFilters();
   const {
     filtered,
     traditions,
@@ -20,31 +17,19 @@ export default function ListPageClient() {
     states,
     loading,
     error,
-  } = useCommunities({
-    filters,
-    sort: enabled && sort === "distance" ? "distance" : sort,
-    userCoords: coords,
-  });
+  } = useCommunities({ filters });
 
   return (
     <div className={styles.shell}>
       <SiteNav />
       <header className={styles.pageHeader}>
         <h1>List</h1>
-        <p>
-          Search and sort enriched community profiles — highest match, beginner
-          friendliness, or distance when location is enabled.
-        </p>
+        <p>Search and browse enriched community profiles.</p>
       </header>
 
-      <SearchAndSort
+      <CommunitySearch
         search={filters.search ?? ""}
         onSearchChange={(v) => updateFilter("search", v)}
-        sort={sort}
-        onSortChange={setSort}
-        showDistanceSort
-        onRequestLocation={request}
-        locationEnabled={enabled}
       />
 
       <div className={styles.toolbar}>
@@ -56,7 +41,6 @@ export default function ListPageClient() {
           onChange={updateFilter}
           onReset={resetFilters}
         />
-        {geoError && <p className={styles.error}>{geoError}</p>}
         {error && <p className={styles.error}>{error}</p>}
         {!loading && (
           <p className={styles.cardMeta}>
