@@ -6,7 +6,6 @@ import { CommunityMapLazy } from "@/components/communities/CommunityMapLazy";
 import { CommunityPreviewCard } from "@/components/communities/CommunityPreviewCard";
 import { SiteNav } from "@/components/communities/SiteNav";
 import styles from "@/components/communities/communities.module.css";
-import btnStyles from "@/styles/buttons.module.css";
 import { useCommunities } from "@/hooks/useCommunities";
 import { useCommunityFilters } from "@/hooks/useCommunityFilters";
 import { isUSCommunity } from "@/lib/usMap";
@@ -81,7 +80,7 @@ export default function MapPageClient() {
                   <div key={item.id} className={styles.mapListRow}>
                     <button
                       type="button"
-                      className={`${btnStyles.btnGhost} ${styles.mapListButton} ${
+                      className={`${styles.mapListButton} ${
                         isSelected ? styles.mapListButtonSelected : ""
                       }`}
                       onClick={() => setSelectedId(item.id)}

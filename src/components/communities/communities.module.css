@@ -419,31 +419,50 @@
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  display: grid;
-  gap: 0.5rem;
-  align-content: start;
+  display: flex;
+  flex-direction: column;
+  margin: 0 -1rem;
   overscroll-behavior: contain;
 }
 
 .mapListRow {
   display: grid;
-  gap: 0.5rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.mapListRow:last-child {
+  border-bottom: none;
 }
 
 .mapListButton {
+  display: block;
   width: 100%;
+  padding: 0.85rem 1rem;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: normal;
+  text-transform: none;
   text-align: left;
-  justify-content: flex-start;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.mapListButton:hover {
+  background: rgba(42, 52, 46, 0.04);
 }
 
 .mapListButtonSelected {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent);
-  color: var(--ink);
+  background: rgba(42, 52, 46, 0.06);
+  font-weight: 600;
 }
 
 .mapInlinePreview {
-  padding-left: 0.25rem;
+  padding: 0 1rem 1rem;
 }
 
 .status {
